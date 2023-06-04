@@ -24,11 +24,13 @@ class LoadableJCEFHtmlPanel(
     var timeoutCallback: String? = EditorBundle.message("message.html.editor.timeout")
 ) : Disposable {
     private val htmlPanelComponent = JCEFHtmlPanel(
-        isOffScreenRenderingEnabled(),
+        false,
         null,
         null)
 
-    private val loadingPanel = JBLoadingPanel(BorderLayout(), this).apply { setLoadingText(CommonBundle.getLoadingTreeNodeText()) }
+    private val loadingPanel = JBLoadingPanel(BorderLayout(), this).apply {
+        setLoadingText(CommonBundle.getLoadingTreeNodeText())
+    }
     private val alarm = AlarmFactory.getInstance().create()
 
     val browser: JBCefBrowserBase get() = htmlPanelComponent

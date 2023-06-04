@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.databind.JsonNode
 
+
 sealed class OutgoingMessage {
     sealed class Request : OutgoingMessage() {
         /**
@@ -77,7 +78,6 @@ sealed class IncomingMessage {
         data class AutoSave(val xml: String) : Event()
         data class Save(val xml: String) : Event()
         object Configure : Event()
-
         object Load : Event()
     }
 }

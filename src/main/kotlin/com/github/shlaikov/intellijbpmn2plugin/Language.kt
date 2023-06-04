@@ -14,6 +14,6 @@ object BPMN2Icon {
 object BPMN2FileType : LanguageFileType(BPMN2) {
     override fun getName() = "bpmn"
     override fun getDescription() = "BPMN2 File"
-    override fun getDefaultExtension(): String = "xml"
+    override fun getDefaultExtension(): String = "text/xml"
     override fun getIcon() = BPMN2Icon.FILE
 }

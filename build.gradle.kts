@@ -1,11 +1,13 @@
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
+import com.github.gradle.node.yarn.task.YarnTask
 
 fun properties(key: String) = providers.gradleProperty(key)
 fun environment(key: String) = providers.environmentVariable(key)
 
 plugins {
     id("java") // Java support
+    id("com.github.node-gradle.node") version "5.0.0" // NodeJS support
     alias(libs.plugins.kotlin) // Kotlin support
     alias(libs.plugins.gradleIntelliJPlugin) // Gradle IntelliJ Plugin
     alias(libs.plugins.changelog) // Gradle Changelog Plugin
@@ -29,6 +31,15 @@ dependencies {
 // Set the JVM language level used to build the project. Use Java 11 for 2020.3+, and Java 17 for 2022.2+.
 kotlin {
     jvmToolchain(11)
+}
+
+// Set the Nodejs language
+node {
+    version.set("18.16.0")
+    distBaseUrl.set("https://nodejs.org/dist")
+    download.set(true)
+    yarnWorkDir.set(file("${project.projectDir}/.cache/yarn"))
+    nodeProjectDir.set(file("${project.projectDir}/"))
 }
 
 // Configure Gradle IntelliJ Plugin - read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
@@ -60,9 +71,23 @@ kover.xmlReport {
     onCheck = true
 }
 
+val buildUsingYarn = tasks.register<YarnTask>("buildYarn") {
+    dependsOn(tasks.npmInstall)
+    yarnCommand.set(listOf("run", "build"))
+    args.set(listOf("--out-dir", "${buildDir}/yarn-output"))
+    inputs.dir("src/main/resources/webview")
+    outputs.dir("${buildDir}/yarn-output")
+}
+
 tasks {
     wrapper {
         gradleVersion = properties("gradleVersion").get()
+    }
+
+    yarn {
+        nodeModulesOutputFilter {
+            exclude("notExistingFile")
+        }
     }
 
     patchPluginXml {

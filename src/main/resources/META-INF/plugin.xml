@@ -17,4 +17,14 @@
     <applicationListeners>
         <listener class="com.github.shlaikov.intellijbpmn2plugin.listeners.FrameStateListener" topic="com.intellij.ide.FrameStateListener"/>
     </applicationListeners>
+
+    <actions>
+        <action id="BPMN2OpenDevtools" text="Open Devtools Panel for the Current BPMN2 Preview"
+                class="com.github.shlaikov.intellijbpmn2plugin.actions.OpenDevtoolsAction">
+            <keyboard-shortcut
+                    keymap="$default"
+                    first-keystroke="control alt G"
+                    second-keystroke="C"/>
+        </action>
+    </actions>
 </idea-plugin>

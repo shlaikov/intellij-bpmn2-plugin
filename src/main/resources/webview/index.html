@@ -1,26 +1,25 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-    <base href="https://bpmn2-plugin/webview/index.html" />
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Document</title>
-</head>
-<body>
+  </head>
+  <body>
+    <noscript> You need to enable JavaScript to run this app. </noscript>
     <script type="text/javascript">
-        /**
-         * @type {{
-         *     localStorage: any,
-         *     baseUrl: string,
-         *     lang: string,
-         *     file: string,
-         *     showChrome: string, // "0" or "1"
-         * }}
-         */
-        window.bpmn2Plugin.data = $$initialData$$;
+      /**
+       * @type {{
+       *     baseUrl: string,
+       *     lang: string,
+       *     file: string,
+       *     showChrome: string, // "0" or "1"
+       * }}
+       */
+      window.bpmn2Data = $$initialData$$ || {};
     </script>
-    <h1>Hello World!</h1>
-</body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>

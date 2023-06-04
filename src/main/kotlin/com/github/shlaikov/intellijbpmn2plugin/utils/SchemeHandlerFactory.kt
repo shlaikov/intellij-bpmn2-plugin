@@ -16,8 +16,7 @@ import java.net.URI
 class SchemeHandlerFactory(val getStream: (uri: URI) -> InputStream?) : CefSchemeHandlerFactory {
     override fun create(browser: CefBrowser, frame: CefFrame, schemeName: String, request: CefRequest): CefResourceHandler {
         val uri = URI(request.url)
-
-        val myStream = getStream(uri)
+        val myStream: InputStream? = getStream(uri)
 
         return object : CefResourceHandler {
             override fun processRequest(req: CefRequest, callback: CefCallback): Boolean {
@@ -25,7 +24,7 @@ class SchemeHandlerFactory(val getStream: (uri: URI) -> InputStream?) : CefSchem
                 return true
             }
 
-            override fun getResponseHeaders(response: CefResponse, response_length: IntRef, redirectUrl: StringRef?) {
+            override fun getResponseHeaders(response: CefResponse, responseLength: IntRef, redirectUrl: StringRef?) {
                 if (uri.path.endsWith(".html")) {
                     response.mimeType = "text/html"
                 } else if (uri.path.endsWith(".js")) {
@@ -48,6 +47,7 @@ class SchemeHandlerFactory(val getStream: (uri: URI) -> InputStream?) : CefSchem
                     bytesRead.set(0)
                     return false
                 }
+
                 try {
                     val availableSize = myStream.available()
                     return if (availableSize > 0) {
@@ -57,20 +57,16 @@ class SchemeHandlerFactory(val getStream: (uri: URI) -> InputStream?) : CefSchem
                         bytesRead.set(0)
                         try {
                             myStream.close()
-                        } catch (ex: IOException) {
-
-                        }
+                        } catch (_: IOException) {}
 
                         false
                     }
                 } catch (ex: IOException) {
-
                     return false
                 }
             }
 
-            override fun cancel() {
-            }
+            override fun cancel() {}
         }
     }
 }

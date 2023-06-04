@@ -15,59 +15,64 @@ import com.intellij.openapi.util.UserDataHolderBase
 import com.jetbrains.rd.util.lifetime.LifetimeDefinition
 import org.cef.CefApp
 import java.beans.PropertyChangeListener
-import java.net.URI
 import javax.swing.JComponent
+import java.net.URI
 
 
 class Editor(private val project: Project, private val file: VirtualFile) : FileEditor, DumbAware {
     private val lifetimeDef = LifetimeDefinition()
+    private val lifetime = lifetimeDef.lifetime
     private val userDataHolder = UserDataHolderBase()
 
     override fun getFile() = file
-    private var view :WebView = WebView()
 
     private val mapper = jacksonObjectMapper().apply {
-        configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     }
+
+    private var view :WebView = WebView(lifetime, mapper)
+    private var didRegisterSchemeHandler = false
 
     init {
         initView()
     }
 
     private fun initView() {
-        CefApp.getInstance().registerSchemeHandlerFactory(
-            "https", "bpmn2-plugin",
-            SchemeHandlerFactory { uri: URI ->
-                if (uri.path == "/index.html") {
-                    data class InitialData(
-                        val baseUrl: String,
-                        val localStorage: String?,
-                        val lang: String,
-                        val file: CharSequence,
-                        val showChrome: String
-                    )
+        if (!didRegisterSchemeHandler) {
+            didRegisterSchemeHandler = true
 
-                    val text = WebView::class.java.getResourceAsStream("/webview/index.html")!!.reader()
-                        .readText()
-                    val updatedText = text.replace(
-                        "\$\$initialData\$\$",
-                        mapper.writeValueAsString(
-                            InitialData(
-                                "https://bpmn2-plugin",
-                                null,
-                                "en",
-                                LoadTextUtil.loadText(file),
-                                "1"
+            CefApp.getInstance().registerSchemeHandlerFactory(
+                "https", "bpmn2-plugin",
+                SchemeHandlerFactory { uri: URI ->
+                    if (uri.path == "/index.html") {
+                        data class InitialData(
+                            val baseUrl: String,
+                            val lang: String,
+                            val file: CharSequence,
+                            val showChrome: String
+                        )
+
+                        val text = WebView::class.java.getResourceAsStream("/webview/dist/index.html").reader()
+                            .readText()
+                        val updatedText = text.replace(
+                            "\$\$initialData\$\$",
+                            mapper.writeValueAsString(
+                                InitialData(
+                                    "https://bpmn2-plugin",
+                                    "en",
+                                    LoadTextUtil.loadText(file),
+                                    "1"
+                                )
                             )
                         )
-                    )
 
-                    updatedText.byteInputStream()
-                } else {
-                    WebView::class.java.getResourceAsStream("/webview/assets" + uri.path)
+                        updatedText.byteInputStream()
+                    } else {
+                        WebView::class.java.getResourceAsStream("/webview/dist" + uri.path)
+                    }
                 }
-            }
-        ).also { successful -> assert(successful) }
+            ).also { successful -> assert(successful) }
+        }
     }
 
     override fun <T : Any?> getUserData(key: Key<T>): T? {
@@ -86,7 +91,7 @@ class Editor(private val project: Project, private val file: VirtualFile) : File
         return view.component
     }
 
-    override fun getPreferredFocusedComponent(): JComponent? {
+    override fun getPreferredFocusedComponent(): JComponent {
         return view.component
     }
 
@@ -102,6 +107,10 @@ class Editor(private val project: Project, private val file: VirtualFile) : File
 
     override fun isValid(): Boolean {
         return true
+    }
+
+    fun openDevTools() {
+        view.openDevTools()
     }
 
     override fun addPropertyChangeListener(listener: PropertyChangeListener) {}

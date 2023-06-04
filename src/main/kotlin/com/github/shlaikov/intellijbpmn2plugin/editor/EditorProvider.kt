@@ -15,14 +15,14 @@ class EditorProvider : FileEditorProvider, DumbAware  {
      */
     override fun accept(project: Project, file: VirtualFile): Boolean {
         val name = file.name.lowercase()
-        val extensions = arrayOf(".bpmn", ".bpmn.xml")
+        val extensions = arrayOf(".bpmn", ".bpmn.xml", ".bpmn2")
 
         return extensions.any { ext -> name.endsWith(ext) }
     }
 
     override fun createEditor(project: Project, file: VirtualFile): FileEditor = Editor(project, file)
 
-    override fun getEditorTypeId() = "BPMN2 JCEF editor"
+    override fun getEditorTypeId() = "BPMN2 JCEF viewer"
 
     override fun getPolicy() = FileEditorPolicy.PLACE_BEFORE_DEFAULT_EDITOR
 }

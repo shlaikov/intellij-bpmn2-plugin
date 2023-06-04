@@ -1,4 +1,8 @@
 .gradle
+.cache
 .idea
+.vscode
 .qodana
 build
+bin
+node_modules
