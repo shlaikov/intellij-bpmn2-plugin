@@ -1,44 +1,38 @@
 # intellij-bpmn2-plugin
 
 ![Build](https://github.com/shlaikov/intellij-bpmn2-plugin/workflows/Build/badge.svg)
-[![Version](https://img.shields.io/jetbrains/plugin/v/PLUGIN_ID.svg)](https://plugins.jetbrains.com/plugin/PLUGIN_ID)
-[![Downloads](https://img.shields.io/jetbrains/plugin/d/PLUGIN_ID.svg)](https://plugins.jetbrains.com/plugin/PLUGIN_ID)
+[![Version](https://img.shields.io/jetbrains/plugin/v/21952.svg)](https://plugins.jetbrains.com/plugin/21952)
+[![MIT license](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-## Template ToDo list
-- [x] Create a new [IntelliJ Platform Plugin Template][template] project.
-- [ ] Get familiar with the [template documentation][template].
-- [ ] Adjust the [pluginGroup](./gradle.properties), [plugin ID](./src/main/resources/META-INF/plugin.xml) and [sources package](./src/main/kotlin).
-- [ ] Adjust the plugin description in `README` (see [Tips][docs:plugin-description])
-- [ ] Review the [Legal Agreements](https://plugins.jetbrains.com/docs/marketplace/legal-agreements.html?from=IJPluginTemplate).
-- [ ] [Publish a plugin manually](https://plugins.jetbrains.com/docs/intellij/publishing-plugin.html?from=IJPluginTemplate) for the first time.
-- [ ] Set the `PLUGIN_ID` in the above README badges.
-- [ ] Set the [Plugin Signing](https://plugins.jetbrains.com/docs/intellij/plugin-signing.html?from=IJPluginTemplate) related [secrets](https://github.com/JetBrains/intellij-platform-plugin-template#environment-variables).
-- [ ] Set the [Deployment Token](https://plugins.jetbrains.com/docs/marketplace/plugin-upload.html?from=IJPluginTemplate).
-- [ ] Click the <kbd>Watch</kbd> button on the top of the [IntelliJ Platform Plugin Template][template] to be notified about releases containing new features and fixes.
+[//]: # ([![Downloads]&#40;https://img.shields.io/jetbrains/plugin/d/21952.svg&#41;]&#40;https://plugins.jetbrains.com/plugin/21952&#41;)
 
 <!-- Plugin description -->
-This Fancy IntelliJ Platform Plugin is going to be your implementation of the brilliant ideas that you have.
+The BPMN2 Plugin is a helpful tool for reviewing BPMN (Business Process Model and Notation) diagrams directly within the code editor of IntelliJ IDEA. This plugin enhances the development experience by providing visual representations of BPMN diagrams and facilitating easy navigation and analysis.
 
-This specific section is a source for the [plugin.xml](/src/main/resources/META-INF/plugin.xml) file which will be extracted by the [Gradle](/build.gradle.kts) during the build process.
+## Features
 
-To keep everything working, do not remove `<!-- ... -->` sections. 
+- Code Editor Integration: View BPMN diagrams directly within the code editor of IntelliJ IDEA, making it easier to understand and modify business processes.
+- Interactive Diagram Viewer: Visualize BPMN diagrams with interactive elements such as zooming, panning, and tooltips for enhanced readability.
+- Navigation: Seamlessly navigate between code and BPMN diagrams using intuitive navigation features.
+- Syntax Highlighting: Highlight BPMN-specific syntax in code as XML files for better code comprehension and identification of BPMN elements.
 <!-- Plugin description end -->
-
 ## Installation
 
 - Using IDE built-in plugin system:
-  
+
   <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>Marketplace</kbd> > <kbd>Search for "intellij-bpmn2-plugin"</kbd> >
   <kbd>Install Plugin</kbd>
-  
+
 - Manually:
 
   Download the [latest release](https://github.com/shlaikov/intellij-bpmn2-plugin/releases/latest) and install it manually using
   <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
 
+## Code of Conduct
 
----
-Plugin based on the [IntelliJ Platform Plugin Template][template].
+Everyone interacting in the Camadmin project’s codebases, issue trackers, chat rooms, and mailing lists is expected to follow the [contributor code of conduct](https://github.com/rubygems/rubygems/blob/master/CODE_OF_CONDUCT.md).
+
+## License
+This plugin is released under the MIT License.
 
 [template]: https://github.com/JetBrains/intellij-platform-plugin-template
-[docs:plugin-description]: https://plugins.jetbrains.com/docs/intellij/plugin-user-experience.html#plugin-description-and-presentation

@@ -11,7 +11,7 @@ declare const window: Window &
 declare module 'bpmn-js/lib/NavigatedViewer' {
     export default class BpmnJS {
         constructor(options?: {
-            container: HTMLInputElement | null;
+            container: HTMLElement | null;
             width?: string | number;
             height?: string | number;
             position?: string;
@@ -25,9 +25,11 @@ declare module 'bpmn-js/lib/NavigatedViewer' {
             | 'moddle'
             | 'modeling'
             | 'translate'
-            | 'defaultRenderer');
+            | 'zoomScroll');
 
         invoke(fn: (...v: any[]) => void | any[]): void;
+
+        on(name: string, callback: function): void;
 
         clear(): void;
 

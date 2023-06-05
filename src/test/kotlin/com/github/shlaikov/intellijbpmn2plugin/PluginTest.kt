@@ -1,7 +1,10 @@
 package com.github.shlaikov.intellijbpmn2plugin
 
+import com.github.shlaikov.intellijbpmn2plugin.editor.EditorProvider
 import com.intellij.ide.highlighter.XmlFileType
 import com.intellij.openapi.components.service
+import com.intellij.openapi.command.impl.DummyProject
+import com.intellij.mock.MockVirtualFileSystem
 import com.intellij.psi.xml.XmlFile
 import com.intellij.testFramework.TestDataPath
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -36,4 +39,30 @@ class PluginTest : BasePlatformTestCase() {
     }
 
     override fun getTestDataPath() = "src/test/testData/rename"
+
+    @Suppress("INACCESSIBLE_TYPE")
+    fun `test accept() method`() {
+        val editorProvider = EditorProvider()
+        val project = DummyProject.getInstance()
+        val vFS = MockVirtualFileSystem()
+
+        val testCases = mapOf(
+            "test.svg" to false,
+            "test.bpmn2" to true,
+            "test.bpmn" to true,
+            "test.xml" to false,
+            "test.kt" to false,
+            "test.bpmn.xml" to true,
+            "test.html" to false,
+            "test.bpm" to false,
+            "test.bpmn.svg.xml" to false
+        )
+
+        testCases.forEach { (filename, expectedResult) ->
+            vFS.file(filename,"")
+            val file = vFS.findFileByPath(filename)
+
+            assert(expectedResult == editorProvider.accept(project, file))
+        }
+    }
 }
