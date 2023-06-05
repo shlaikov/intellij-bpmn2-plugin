@@ -5,7 +5,6 @@ import com.intellij.ide.plugins.MultiPanel
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.editor.EditorBundle
-import com.intellij.openapi.util.SystemInfoRt
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.ui.components.JBLoadingPanel
 import com.intellij.ui.jcef.JBCefBrowserBase
@@ -34,6 +33,7 @@ class LoadableJCEFHtmlPanel(
     private val alarm = AlarmFactory.getInstance().create()
 
     val browser: JBCefBrowserBase get() = htmlPanelComponent
+    val component: JComponent get() = this.multiPanel
 
     companion object {
         private const val LOADING_KEY = 1
@@ -52,9 +52,11 @@ class LoadableJCEFHtmlPanel(
         if (url != null) {
             htmlPanelComponent.loadURL(url)
         }
+
         if (html != null) {
             htmlPanelComponent.loadHTML(html)
         }
+
         multiPanel.select(CONTENT_KEY, true)
     }
 
@@ -86,18 +88,5 @@ class LoadableJCEFHtmlPanel(
 
     override fun dispose() {
         alarm.dispose()
-    }
-
-    val component: JComponent get() = this.multiPanel
-
-    private fun isOffScreenRenderingEnabled(): Boolean {
-        val jvmVersion = System.getProperty("java.vm.version")
-        val build: Double = try {
-            jvmVersion.replace("[^-]*-b([0-9]*)".toRegex(), "$1").toDouble()
-        } catch (e: NumberFormatException) {
-            0.0
-        }
-
-        return SystemInfoRt.isWindows || build >= 829.9
     }
 }

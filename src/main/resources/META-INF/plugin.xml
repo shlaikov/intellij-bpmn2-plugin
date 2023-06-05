@@ -10,13 +10,11 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <fileType name="bpmn" implementationClass="com.github.shlaikov.intellijbpmn2plugin.BPMN2FileType"
-                  fieldName="INSTANCE" language="bpmn" extensions="bpmn;bpmn.xml"/>
+                  fieldName="INSTANCE" language="bpmn" extensions="bpmn;bpmn.xml;bpmn2" />
         <fileEditorProvider implementation="com.github.shlaikov.intellijbpmn2plugin.editor.EditorProvider" />
+        <iconProvider implementation="com.github.shlaikov.intellijbpmn2plugin.icons.IconProvider" />
+        <iconMapper mappingFile="BPMNIconMappings.json" />
     </extensions>
-
-    <applicationListeners>
-        <listener class="com.github.shlaikov.intellijbpmn2plugin.listeners.FrameStateListener" topic="com.intellij.ide.FrameStateListener"/>
-    </applicationListeners>
 
     <actions>
         <action id="BPMN2OpenDevtools" text="Open Devtools Panel for the Current BPMN2 Preview"

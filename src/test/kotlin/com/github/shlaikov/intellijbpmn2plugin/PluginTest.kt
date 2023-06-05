@@ -9,7 +9,7 @@ import com.intellij.util.PsiErrorElementUtil
 import com.github.shlaikov.intellijbpmn2plugin.services.ProjectService
 
 @TestDataPath("\$CONTENT_ROOT/src/test/testData")
-class MyPluginTest : BasePlatformTestCase() {
+class PluginTest : BasePlatformTestCase() {
 
     fun testXMLFile() {
         val psiFile = myFixture.configureByText(XmlFileType.INSTANCE, "<foo>bar</foo>")
@@ -32,7 +32,7 @@ class MyPluginTest : BasePlatformTestCase() {
     fun testProjectService() {
         val projectService = project.service<ProjectService>()
 
-        assertNotSame(projectService.getRandomNumber(), projectService.getRandomNumber())
+        assertNotNull(projectService)
     }
 
     override fun getTestDataPath() = "src/test/testData/rename"

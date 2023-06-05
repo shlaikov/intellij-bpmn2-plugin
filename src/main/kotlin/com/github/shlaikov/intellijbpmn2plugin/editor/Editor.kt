@@ -52,7 +52,7 @@ class Editor(private val project: Project, private val file: VirtualFile) : File
                             val showChrome: String
                         )
 
-                        val text = WebView::class.java.getResourceAsStream("/webview/dist/index.html").reader()
+                        val text = WebView::class.java.getResourceAsStream("/webview/dist/index.html")!!.reader()
                             .readText()
                         val updatedText = text.replace(
                             "\$\$initialData\$\$",

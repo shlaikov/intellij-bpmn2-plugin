@@ -1,5 +1,6 @@
 package com.github.shlaikov.intellijbpmn2plugin.editor
 
+import com.github.shlaikov.intellijbpmn2plugin.utils.File
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorPolicy
 import com.intellij.openapi.fileEditor.FileEditorProvider
@@ -9,15 +10,8 @@ import com.intellij.openapi.vfs.VirtualFile
 
 
 class EditorProvider : FileEditorProvider, DumbAware  {
-    /**
-     * accept is called whenever IntelliJ opens an editor
-     * if accept return true, IntelliJ will open an instance of this editor
-     */
     override fun accept(project: Project, file: VirtualFile): Boolean {
-        val name = file.name.lowercase()
-        val extensions = arrayOf(".bpmn", ".bpmn.xml", ".bpmn2")
-
-        return extensions.any { ext -> name.endsWith(ext) }
+        return File.isBPMNFile(file)
     }
 
     override fun createEditor(project: Project, file: VirtualFile): FileEditor = Editor(project, file)
