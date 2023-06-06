@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import BPMNViewer from "./components/BPMNViewer";
+import BPMNViewer from "./components/Viewer";
 import { exampleDiagram } from "./utils/exampleDiagram";
 
 function App() {

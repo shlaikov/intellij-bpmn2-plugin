@@ -1,0 +1,36 @@
+.io-error-bar {
+  width: auto;
+  position: fixed;
+  right: 10px;
+  top: 10px;
+  padding: 5px;
+  margin: 0;
+  max-width: 450px;
+  background-color: #f2dede;
+  border-radius: 2px;
+  border: solid 1px #e0e0e0;
+  color: #555555;
+  z-index: 2;
+}
+
+.io-error-bar svg {
+  width: 28px;
+  color: #d93b42;
+}
+
+.io-error-bar__header {
+  display: flex;
+}
+
+.io-error-bar__header-title {
+  margin: 0;
+  margin-left: 10px;
+  font-size: 18pt;
+  font-weight: bold;
+}
+
+.io-error-bar__message {
+  padding: 0 5px;
+  text-wrap: wrap;
+  overflow: hidden;
+}
