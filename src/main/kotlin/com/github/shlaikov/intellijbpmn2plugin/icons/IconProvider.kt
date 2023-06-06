@@ -13,7 +13,7 @@ class IconProvider : DumbAware, IconProvider() {
     override fun getIcon(element: PsiElement, flags: Int): Icon? {
         if (element is PsiFile) {
             if (File.isBPMNFile(element.virtualFile)) {
-                return BPMN2Icon.FILE
+                return BPMN2Icon.FileType
             }
         }
 

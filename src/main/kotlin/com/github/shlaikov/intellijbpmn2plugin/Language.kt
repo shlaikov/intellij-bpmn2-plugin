@@ -10,7 +10,8 @@ import javax.swing.Icon
 object BPMN2 : Language("bpmn")
 
 object BPMN2Icon {
-    val FILE = IconLoader.getIcon("/icons/file.svg", javaClass)
+    @JvmField
+    val FileType = IconLoader.getIcon("/icons/file.svg", javaClass)
 }
 
 object BPMN2FileType : LanguageFileType(BPMN2) {
@@ -20,7 +21,5 @@ object BPMN2FileType : LanguageFileType(BPMN2) {
 
     override fun getDefaultExtension(): String = XmlFileType.DEFAULT_EXTENSION
 
-    override fun getIcon(): Icon {
-        return BPMN2Icon.FILE
-    }
+    override fun getIcon(): Icon = BPMN2Icon.FileType
 }

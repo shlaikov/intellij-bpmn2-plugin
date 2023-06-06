@@ -39,7 +39,7 @@ node {
     distBaseUrl.set("https://nodejs.org/dist")
     download.set(true)
     yarnWorkDir.set(file("${project.projectDir}/.cache/yarn"))
-    nodeProjectDir.set(file("${project.projectDir}/"))
+    nodeProjectDir.set(file("${project.projectDir}/src/main/resources/webview"))
 }
 
 // Configure Gradle IntelliJ Plugin - read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
@@ -72,11 +72,12 @@ kover.xmlReport {
 }
 
 val buildUsingYarn = tasks.register<YarnTask>("buildYarn") {
-    dependsOn(tasks.npmInstall)
+    dependsOn(tasks.yarn)
     yarnCommand.set(listOf("run", "build"))
-    args.set(listOf("--out-dir", "${buildDir}/yarn-output"))
-    inputs.dir("src/main/resources/webview")
-    outputs.dir("${buildDir}/yarn-output")
+    args.set(listOf(
+      "--out-dir", "${project.projectDir}/src/main/resources/webview/dist"
+    ))
+    inputs.dir("src/")
 }
 
 tasks {
