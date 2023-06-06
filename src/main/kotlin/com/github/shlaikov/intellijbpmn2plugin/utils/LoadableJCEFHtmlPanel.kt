@@ -3,13 +3,15 @@ package com.github.shlaikov.intellijbpmn2plugin.utils
 import com.intellij.CommonBundle
 import com.intellij.ide.plugins.MultiPanel
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.editor.EditorBundle
 import com.intellij.openapi.util.registry.Registry
+import com.intellij.openapi.util.Disposer
 import com.intellij.ui.components.JBLoadingPanel
 import com.intellij.ui.jcef.JBCefBrowserBase
 import com.intellij.ui.jcef.JCEFHtmlPanel
-import com.intellij.util.AlarmFactory
+import com.intellij.util.Alarm
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.handler.CefLoadHandlerAdapter
@@ -30,7 +32,7 @@ class LoadableJCEFHtmlPanel(
     private val loadingPanel = JBLoadingPanel(BorderLayout(), this).apply {
         setLoadingText(CommonBundle.getLoadingTreeNodeText())
     }
-    private val alarm = AlarmFactory.getInstance().create()
+    private val alarm = Alarm(Alarm.ThreadToUse.SWING_THREAD, this)
 
     val browser: JBCefBrowserBase get() = htmlPanelComponent
     val component: JComponent get() = this.multiPanel
@@ -49,6 +51,10 @@ class LoadableJCEFHtmlPanel(
     }
 
     init {
+        ApplicationManager.getApplication().invokeLater {
+            Disposer.register(this@LoadableJCEFHtmlPanel, alarm)
+        }
+
         if (url != null) {
             htmlPanelComponent.loadURL(url)
         }

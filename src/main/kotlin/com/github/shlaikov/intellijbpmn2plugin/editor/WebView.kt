@@ -3,7 +3,6 @@ package com.github.shlaikov.intellijbpmn2plugin.editor
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.shlaikov.intellijbpmn2plugin.utils.LoadableJCEFHtmlPanel
 import com.jetbrains.rd.util.lifetime.Lifetime
-import com.jetbrains.rd.util.lifetime.onTermination
 import com.intellij.ui.jcef.JBCefJSQuery
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
@@ -43,7 +42,7 @@ class WebView(lifetime: Lifetime, mapper: ObjectMapper) {
                 null
             }
 
-            lifetime.onTermination {
+            lifetime.onTerminationIfAlive {
                 handler.dispose()
                 panel.dispose()
             }
@@ -61,7 +60,7 @@ class WebView(lifetime: Lifetime, mapper: ObjectMapper) {
         }.also { handler ->
             panel.browser.jbCefClient.addLoadHandler(handler, panel.browser.cefBrowser)
 
-            lifetime.onTermination {
+            lifetime.onTerminationIfAlive {
                 panel.browser.jbCefClient.removeLoadHandler(handler, panel.browser.cefBrowser)
             }
         }

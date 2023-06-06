@@ -1,5 +1,6 @@
 package com.github.shlaikov.intellijbpmn2plugin
 
+import com.intellij.ide.highlighter.XmlFileType
 import com.intellij.lang.Language
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.util.IconLoader
@@ -17,7 +18,7 @@ object BPMN2FileType : LanguageFileType(BPMN2) {
 
     override fun getDescription() = "BPMN 2.0 File"
 
-    override fun getDefaultExtension(): String = "xml"
+    override fun getDefaultExtension(): String = XmlFileType.DEFAULT_EXTENSION
 
     override fun getIcon(): Icon {
         return BPMN2Icon.FILE
