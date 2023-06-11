@@ -9,7 +9,6 @@ import org.cef.browser.CefFrame
 import org.cef.handler.CefLoadHandlerAdapter
 import org.jetbrains.concurrency.AsyncPromise
 import org.jetbrains.concurrency.Promise
-import java.util.*
 
 
 class WebView(lifetime: Lifetime, mapper: ObjectMapper) {
@@ -17,7 +16,6 @@ class WebView(lifetime: Lifetime, mapper: ObjectMapper) {
 
     val component = panel.component
 
-    private val responseMap = HashMap<String, AsyncPromise<IncomingMessage.Response>>()
     private var _initializedPromise = AsyncPromise<Unit>()
 
     fun initialized(): Promise<Unit> {
@@ -26,19 +24,7 @@ class WebView(lifetime: Lifetime, mapper: ObjectMapper) {
 
     init {
         val jsRequestHandler = JBCefJSQuery.create(panel.browser).also { handler ->
-            handler.addHandler { request: String ->
-                val message = mapper.readValue(request, IncomingMessage::class.java)
-
-                if (message is IncomingMessage.Response) {
-                    val promise = responseMap[message.requestId]!!
-                    responseMap.remove(message.requestId)
-                    promise.setResult(message)
-                }
-
-                if (message is IncomingMessage.Event) {
-                    this.handleEvent(message)
-                }
-
+            handler.addHandler { _: String ->
                 null
             }
 
@@ -66,19 +52,13 @@ class WebView(lifetime: Lifetime, mapper: ObjectMapper) {
         }
     }
 
-    fun openDevTools() {
-        panel.browser.openDevtools()
+    fun reload(ignoreCache: Boolean = false) = if (ignoreCache) {
+        panel.browser.cefBrowser.reloadIgnoreCache()
+    } else {
+        panel.browser.cefBrowser.reload()
     }
 
-    fun handleEvent(event: IncomingMessage.Event) {
-        when (event) {
-            is IncomingMessage.Event.Initialized -> {
-                _initializedPromise.setResult(Unit)
-            }
-            is IncomingMessage.Event.Configure -> {}
-            is IncomingMessage.Event.AutoSave -> {}
-            is IncomingMessage.Event.Save -> {}
-            IncomingMessage.Event.Load -> {}
-        }
+    fun openDevTools() {
+        panel.browser.openDevtools()
     }
 }

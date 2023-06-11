@@ -10,13 +10,17 @@ import com.intellij.openapi.fileEditor.impl.LoadTextUtil
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.util.UserDataHolderBase
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.newvfs.BulkFileListener
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.jetbrains.rd.util.lifetime.LifetimeDefinition
 import org.cef.CefApp
+import org.jetbrains.annotations.NotNull
 import java.beans.PropertyChangeListener
-import javax.swing.JComponent
 import java.net.URI
+import javax.swing.JComponent
 
 
 class Editor(private val project: Project, private val file: VirtualFile) : FileEditor, DumbAware {
@@ -24,6 +28,7 @@ class Editor(private val project: Project, private val file: VirtualFile) : File
     private val lifetime = lifetimeDef.lifetime
     private val userDataHolder = UserDataHolderBase()
 
+    override fun getName(): String = "Diagram"
     override fun getFile() = file
 
     private val mapper = jacksonObjectMapper().apply {
@@ -35,6 +40,20 @@ class Editor(private val project: Project, private val file: VirtualFile) : File
 
     init {
         initView()
+
+        val messageBus = project.messageBus
+
+        messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES,
+            object : BulkFileListener {
+                override fun after(@NotNull events: MutableList<out VFileEvent>) {
+                    for (event in events) {
+                        if (event.isFromSave && event.file?.path == file.path) {
+                            view.reload(true)
+                        }
+                    }
+                }
+            }
+        )
     }
 
     private fun initView() {
@@ -83,20 +102,12 @@ class Editor(private val project: Project, private val file: VirtualFile) : File
         userDataHolder.putUserData(key, value)
     }
 
-    override fun dispose() {
-        lifetimeDef.terminate(true)
-    }
-
     override fun getComponent(): JComponent {
         return view.component
     }
 
     override fun getPreferredFocusedComponent(): JComponent {
         return view.component
-    }
-
-    override fun getName(): String {
-        return "Diagram"
     }
 
     override fun setState(state: FileEditorState) {}
@@ -117,7 +128,9 @@ class Editor(private val project: Project, private val file: VirtualFile) : File
 
     override fun removePropertyChangeListener(listener: PropertyChangeListener) {}
 
-    override fun getCurrentLocation(): FileEditorLocation? {
-        return null
+    override fun getCurrentLocation(): FileEditorLocation? = null
+
+    override fun dispose() {
+        lifetimeDef.terminate(true)
     }
 }
