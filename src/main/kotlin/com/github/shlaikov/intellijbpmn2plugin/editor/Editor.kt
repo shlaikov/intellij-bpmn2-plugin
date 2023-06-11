@@ -1,78 +1,50 @@
 package com.github.shlaikov.intellijbpmn2plugin.editor
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.github.shlaikov.intellijbpmn2plugin.utils.SchemeHandlerFactory
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorLocation
 import com.intellij.openapi.fileEditor.FileEditorState
-import com.intellij.openapi.fileEditor.impl.LoadTextUtil
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.util.UserDataHolderBase
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.newvfs.BulkFileListener
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import com.jetbrains.rd.util.lifetime.LifetimeDefinition
-import org.cef.CefApp
+import org.jetbrains.annotations.NotNull
 import java.beans.PropertyChangeListener
 import javax.swing.JComponent
-import java.net.URI
 
 
-class Editor(private val project: Project, private val file: VirtualFile) : FileEditor, DumbAware {
+class Editor(project: Project, private val file: VirtualFile) : FileEditor, DumbAware {
     private val lifetimeDef = LifetimeDefinition()
     private val lifetime = lifetimeDef.lifetime
     private val userDataHolder = UserDataHolderBase()
 
+    override fun getName(): String = "Diagram"
     override fun getFile() = file
 
-    private val mapper = jacksonObjectMapper().apply {
-        configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-    }
-
-    private var view :WebView = WebView(lifetime, mapper)
-    private var didRegisterSchemeHandler = false
+    private var view :WebView = WebView(lifetime)
 
     init {
-        initView()
-    }
+        view.initializeSchemeHandler(file)
 
-    private fun initView() {
-        if (!didRegisterSchemeHandler) {
-            didRegisterSchemeHandler = true
+        val messageBus = project.messageBus
 
-            CefApp.getInstance().registerSchemeHandlerFactory(
-                "https", "bpmn2-plugin",
-                SchemeHandlerFactory { uri: URI ->
-                    if (uri.path == "/index.html") {
-                        data class InitialData(
-                            val baseUrl: String,
-                            val lang: String,
-                            val file: CharSequence,
-                            val showChrome: String
-                        )
-
-                        val text = WebView::class.java.getResourceAsStream("/webview/dist/index.html")!!.reader()
-                            .readText()
-                        val updatedText = text.replace(
-                            "\$\$initialData\$\$",
-                            mapper.writeValueAsString(
-                                InitialData(
-                                    "https://bpmn2-plugin",
-                                    "en",
-                                    LoadTextUtil.loadText(file),
-                                    "1"
-                                )
-                            )
-                        )
-
-                        updatedText.byteInputStream()
-                    } else {
-                        WebView::class.java.getResourceAsStream("/webview/dist" + uri.path)
+        messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES,
+            object : BulkFileListener {
+                override fun after(@NotNull events: MutableList<out VFileEvent>) {
+                    for (event in events) {
+                        if (event.isFromSave && event.file?.path == file.path) {
+                            view.initializeSchemeHandler(file).also {
+                                view.reload(true)
+                            }
+                        }
                     }
                 }
-            ).also { successful -> assert(successful) }
-        }
+            }
+        )
     }
 
     override fun <T : Any?> getUserData(key: Key<T>): T? {
@@ -83,20 +55,12 @@ class Editor(private val project: Project, private val file: VirtualFile) : File
         userDataHolder.putUserData(key, value)
     }
 
-    override fun dispose() {
-        lifetimeDef.terminate(true)
-    }
-
     override fun getComponent(): JComponent {
         return view.component
     }
 
     override fun getPreferredFocusedComponent(): JComponent {
         return view.component
-    }
-
-    override fun getName(): String {
-        return "Diagram"
     }
 
     override fun setState(state: FileEditorState) {}
@@ -117,7 +81,9 @@ class Editor(private val project: Project, private val file: VirtualFile) : File
 
     override fun removePropertyChangeListener(listener: PropertyChangeListener) {}
 
-    override fun getCurrentLocation(): FileEditorLocation? {
-        return null
+    override fun getCurrentLocation(): FileEditorLocation? = null
+
+    override fun dispose() {
+        lifetimeDef.terminate(true)
     }
 }

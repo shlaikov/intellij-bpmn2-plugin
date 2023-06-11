@@ -1,24 +1,32 @@
 package com.github.shlaikov.intellijbpmn2plugin.editor
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.shlaikov.intellijbpmn2plugin.utils.LoadableJCEFHtmlPanel
+import com.github.shlaikov.intellijbpmn2plugin.utils.SchemeHandlerFactory
+import com.intellij.openapi.fileEditor.impl.LoadTextUtil
+import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.rd.util.lifetime.Lifetime
 import com.intellij.ui.jcef.JBCefJSQuery
+import org.cef.CefApp
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.handler.CefLoadHandlerAdapter
 import org.jetbrains.concurrency.AsyncPromise
 import org.jetbrains.concurrency.Promise
-import java.util.*
+import java.net.URI
 
 
-class WebView(lifetime: Lifetime, mapper: ObjectMapper) {
+class WebView(lifetime: Lifetime) {
     private val panel = LoadableJCEFHtmlPanel("https://bpmn2-plugin/index.html")
 
     val component = panel.component
 
-    private val responseMap = HashMap<String, AsyncPromise<IncomingMessage.Response>>()
     private var _initializedPromise = AsyncPromise<Unit>()
+    private var didRegisterSchemeHandler = false
+    private val mapper = jacksonObjectMapper().apply {
+        configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    }
 
     fun initialized(): Promise<Unit> {
         return _initializedPromise
@@ -26,19 +34,7 @@ class WebView(lifetime: Lifetime, mapper: ObjectMapper) {
 
     init {
         val jsRequestHandler = JBCefJSQuery.create(panel.browser).also { handler ->
-            handler.addHandler { request: String ->
-                val message = mapper.readValue(request, IncomingMessage::class.java)
-
-                if (message is IncomingMessage.Response) {
-                    val promise = responseMap[message.requestId]!!
-                    responseMap.remove(message.requestId)
-                    promise.setResult(message)
-                }
-
-                if (message is IncomingMessage.Event) {
-                    this.handleEvent(message)
-                }
-
+            handler.addHandler { _: String ->
                 null
             }
 
@@ -66,19 +62,49 @@ class WebView(lifetime: Lifetime, mapper: ObjectMapper) {
         }
     }
 
-    fun openDevTools() {
-        panel.browser.openDevtools()
+    fun initializeSchemeHandler(file: VirtualFile) {
+        if (!didRegisterSchemeHandler) {
+            didRegisterSchemeHandler = true
+
+            CefApp.getInstance().registerSchemeHandlerFactory(
+                "https", "bpmn2-plugin",
+                SchemeHandlerFactory { uri: URI ->
+                    if (uri.path == "/index.html") {
+                        data class InitialData(
+                            val baseUrl: String,
+                            val lang: String,
+                            val file: CharSequence
+                        )
+
+                        val text = WebView::class.java.getResourceAsStream("/webview/dist/index.html")!!.reader()
+                            .readText()
+                        val updatedText = text.replace(
+                            "\$\$initialData\$\$",
+                            mapper.writeValueAsString(
+                                InitialData(
+                                    "https://bpmn2-plugin",
+                                    "en",
+                                    LoadTextUtil.loadText(file)
+                                )
+                            )
+                        )
+
+                        updatedText.byteInputStream()
+                    } else {
+                        WebView::class.java.getResourceAsStream("/webview/dist" + uri.path)
+                    }
+                }
+            ).also { successful -> assert(successful) }
+        }
     }
 
-    fun handleEvent(event: IncomingMessage.Event) {
-        when (event) {
-            is IncomingMessage.Event.Initialized -> {
-                _initializedPromise.setResult(Unit)
-            }
-            is IncomingMessage.Event.Configure -> {}
-            is IncomingMessage.Event.AutoSave -> {}
-            is IncomingMessage.Event.Save -> {}
-            IncomingMessage.Event.Load -> {}
-        }
+    fun reload(ignoreCache: Boolean = false) = if (ignoreCache) {
+        panel.browser.cefBrowser.reloadIgnoreCache()
+    } else {
+        panel.browser.cefBrowser.reload()
+    }
+
+    fun openDevTools() {
+        panel.browser.openDevtools()
     }
 }

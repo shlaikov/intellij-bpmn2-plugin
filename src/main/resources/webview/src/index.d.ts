@@ -1,10 +1,11 @@
 declare const window: Window &
     typeof globalThis & {
+        processMessageFromHost: (message: unknown) => void
+        sendMessageToHost: (message: unknown) => void
         bpmn2Data: {
             baseUrl: string;
             lang: string;
             file: string;
-            showChrome: "1" | "0";
         };
     }
 
