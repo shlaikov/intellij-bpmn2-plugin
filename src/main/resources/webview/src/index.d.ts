@@ -6,7 +6,6 @@ declare const window: Window &
             baseUrl: string;
             lang: string;
             file: string;
-            showChrome: "1" | "0";
         };
     }
 
