@@ -12,3 +12,11 @@
 - Validation and error handling in panel
 - Add .bpmn files to IDEA
 
+## [0.2.0] - 2023-06-12
+### Added
+- Update issue templates
+- Supported dark theme icon
+- Change canvas state after XML editing.
+
+### Fixed
+- Initializing scheme handler for WebView.
