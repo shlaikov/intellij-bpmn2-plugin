@@ -1,7 +1,7 @@
 {
   "icons": {
     "expui": {
-      "file": "icons/file.svg"
+      "bpmn.svg": "icons/bpmn.svg"
     }
   }
 }

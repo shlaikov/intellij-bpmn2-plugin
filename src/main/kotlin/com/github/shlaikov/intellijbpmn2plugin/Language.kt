@@ -11,7 +11,7 @@ object BPMN2 : Language("bpmn")
 
 object BPMN2Icon {
     @JvmField
-    val FileType = IconLoader.getIcon("/icons/file.svg", javaClass)
+    val FileType = IconLoader.getIcon("/icons/bpmn.svg", javaClass)
 }
 
 object BPMN2FileType : LanguageFileType(BPMN2) {
