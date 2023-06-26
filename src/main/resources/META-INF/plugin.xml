@@ -11,6 +11,7 @@
     <extensions defaultExtensionNs="com.intellij">
         <fileType name="bpmn" implementationClass="com.github.shlaikov.intellijbpmn2plugin.BPMN2FileType"
                   fieldName="INSTANCE" language="bpmn" extensions="bpmn;bpmn.xml;bpmn2" />
+        <lang.syntaxHighlighterFactory language="bpmn" implementationClass="com.intellij.lang.xml.XmlSyntaxHighlighterFactory" />
         <fileEditorProvider implementation="com.github.shlaikov.intellijbpmn2plugin.editor.EditorProvider" />
         <iconProvider implementation="com.github.shlaikov.intellijbpmn2plugin.icons.IconProvider" />
         <iconMapper mappingFile="BPMNIconMappings.json" />

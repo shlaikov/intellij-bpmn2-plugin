@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.shlaikov.intellijbpmn2plugin.utils.LoadableJCEFHtmlPanel
 import com.github.shlaikov.intellijbpmn2plugin.utils.SchemeHandlerFactory
+import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.rd.util.lifetime.Lifetime
@@ -73,7 +74,8 @@ class WebView(lifetime: Lifetime) {
                         data class InitialData(
                             val baseUrl: String,
                             val lang: String,
-                            val file: CharSequence
+                            val file: CharSequence,
+                            val theme: String
                         )
 
                         val text = WebView::class.java.getResourceAsStream("/webview/dist/index.html")!!.reader()
@@ -84,7 +86,8 @@ class WebView(lifetime: Lifetime) {
                                 InitialData(
                                     "https://bpmn2-plugin",
                                     "en",
-                                    LoadTextUtil.loadText(file)
+                                    LoadTextUtil.loadText(file),
+                                    getEditorTheme()
                                 )
                             )
                         )
@@ -106,5 +109,13 @@ class WebView(lifetime: Lifetime) {
 
     fun openDevTools() {
         panel.browser.openDevtools()
+    }
+
+    private fun getEditorTheme(): String {
+        if (EditorColorsManager.getInstance().isDarkEditor) {
+            return Theme.DARK.toString()
+        }
+
+        return Theme.LIGHT.toString()
     }
 }

@@ -1,5 +1,7 @@
 package com.github.shlaikov.intellijbpmn2plugin.editor
 
+import com.intellij.openapi.editor.colors.EditorColorsListener
+import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorLocation
 import com.intellij.openapi.fileEditor.FileEditorState
@@ -45,6 +47,10 @@ class Editor(project: Project, private val file: VirtualFile) : FileEditor, Dumb
                 }
             }
         )
+
+        messageBus.connect().subscribe(EditorColorsManager.TOPIC, EditorColorsListener {
+            view.reload(true)
+        })
     }
 
     override fun <T : Any?> getUserData(key: Key<T>): T? {
@@ -71,6 +77,10 @@ class Editor(project: Project, private val file: VirtualFile) : FileEditor, Dumb
 
     override fun isValid(): Boolean {
         return true
+    }
+
+    private fun reloadView(ignoreCache: Boolean = true) {
+        view.reload(ignoreCache)
     }
 
     fun openDevTools() {

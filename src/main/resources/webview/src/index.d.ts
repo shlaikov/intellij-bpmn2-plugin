@@ -6,6 +6,7 @@ declare const window: Window &
             baseUrl: string;
             lang: string;
             file: string;
+            theme: string;
         };
     }
 
@@ -15,6 +16,9 @@ declare module 'bpmn-js/lib/NavigatedViewer' {
             container: HTMLElement | null;
             width?: string | number;
             height?: string | number;
+            bpmnRenderer?: object;
+            textRenderer?: object;
+            additionalModules?: Array;
             position?: string;
             deferUpdate?: boolean;
         });
@@ -38,6 +42,6 @@ declare module 'bpmn-js/lib/NavigatedViewer' {
             xml: string,
         ): void;
 
-        destroy(): void;
+        detach(): void;
     }
 }

@@ -1,14 +1,16 @@
+import { ThemeType } from "../../utils/theme";
 import "./style.css";
 
 interface Props {
   zoomReset(): void;
   zoomIn(): void;
   zoomOut(): void;
+  theme: ThemeType;
 }
 
-function ZoomBar({ zoomReset, zoomIn, zoomOut }: Props) {
+function ZoomBar({ zoomReset, zoomIn, zoomOut, theme }: Props) {
   return (
-    <div className="io-zoom-controls">
+    <div className="io-zoom-controls" style={{ filter: theme === ThemeType.Light ? "invert(0)" : "invert(1)" }}>
       <ul className="io-zoom-reset io-control-list">
         <li>
           <div title="reset zoom" onClick={() => zoomReset()}>

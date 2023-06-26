@@ -2,13 +2,16 @@ import { useState, useEffect } from "react";
 
 import BPMNViewer from "./components/Viewer";
 import { exampleDiagram } from "./utils/exampleDiagram";
+import { ThemeType } from "./utils/theme";
 
 function App() {
+  const { bpmn2Data = {} }: any = window;
+
   const [xml, setXML] = useState("");
+  const [theme, setTheme] = useState<ThemeType>(bpmn2Data.theme);
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { bpmn2Data = {} }: any = window;
+    setTheme(bpmn2Data.theme);
 
     if (bpmn2Data.file) {
       setXML(bpmn2Data.file);
@@ -17,7 +20,7 @@ function App() {
     }
   }, []);
 
-  return <BPMNViewer xml={xml} />;
+  return <BPMNViewer xml={xml} theme={theme} />;
 }
 
 export default App;

@@ -16,7 +16,7 @@ class EditorProvider : FileEditorProvider, DumbAware  {
 
     override fun createEditor(project: Project, file: VirtualFile): FileEditor = Editor(project, file)
 
-    override fun getEditorTypeId() = "BPMN2 JCEF viewer"
+    override fun getEditorTypeId() = "BPMN2_JCEF_viewer"
 
     override fun getPolicy() = FileEditorPolicy.PLACE_BEFORE_DEFAULT_EDITOR
 }
