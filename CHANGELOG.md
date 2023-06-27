@@ -3,9 +3,16 @@
 # intellij-bpmn2-plugin Changelog
 
 ## [Unreleased]
+### Added
+- Initial scaffold created from [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template)
+
+## [0.1.0] - 2023-06-07
+### Added
+- BPMN Viewer
+- Validation and error handling in panel
+- Add .bpmn files to IDEA
 
 ## [0.2.0] - 2023-06-12
-
 ### Added
 - Update issue templates
 - Supported dark theme icon
@@ -14,13 +21,7 @@
 ### Fixed
 - Initializing scheme handler for WebView.
 
-## [0.1.0] - 2023-06-07
+## [0.2.1] - 2023-06-27
 
-### Added
-- BPMN Viewer
-- Validation and error handling in panel
-- Add .bpmn files to IDEA
-
-[Unreleased]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v0.2.0...HEAD
-[0.2.0]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/shlaikov/intellij-bpmn2-plugin/commits/v0.1.0
+### Fixed
+-  Fixed icons in expUi.
