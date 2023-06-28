@@ -21,7 +21,6 @@ on:
   pull_request:
 
 jobs:
-
   # Run Gradle Wrapper Validation Action to verify the wrapper's checksum
   # Run verifyPlugin, IntelliJ Plugin Verifier, and test Gradle tasks
   # Build plugin and provide the artifact for the next workflow jobs
@@ -32,7 +31,6 @@ jobs:
       version: ${{ steps.properties.outputs.version }}
       changelog: ${{ steps.properties.outputs.changelog }}
     steps:
-
       # Free GitHub Actions Environment Disk Space
       - name: Maximize Build Space
         run: |
@@ -79,10 +77,6 @@ jobs:
       - name: Run Tests
         run: ./gradlew check
 
-      # Build webview
-      - name: Build Frontend
-        run: ./gradlew buildYarn
-
       # Collect Tests Result of failed tests
       - name: Collect Tests Result
         if: ${{ failure() }}
@@ -104,9 +98,13 @@ jobs:
           path: ${{ steps.properties.outputs.pluginVerifierHomeDir }}/ides
           key: plugin-verifier-${{ hashFiles('build/listProductsReleases.txt') }}
 
-      # Run Verify Plugin task and IntelliJ Plugin Verifier tool
-      - name: Run Plugin Verification tasks
-        run: ./gradlew runPluginVerifier -Dplugin.verifier.home.dir=${{ steps.properties.outputs.pluginVerifierHomeDir }}
+      # Run Verify Plugin task with Frontend builds and IntelliJ Plugin Verifier tool
+      - name: Build Frontend and Run Plugin Verification tasks
+        shell: bash
+        run: |
+          ./gradlew buildYarn
+          ./gradlew cleanYarnModules
+          ./gradlew runPluginVerifier -Dplugin.verifier.home.dir=${{ steps.properties.outputs.pluginVerifierHomeDir }}
 
       # Collect Plugin Verifier Result
       - name: Collect Plugin Verifier Result
@@ -148,7 +146,6 @@ jobs:
     permissions:
       contents: write
     steps:
-
       # Check out current repository
       - name: Fetch Sources
         uses: actions/checkout@v3
