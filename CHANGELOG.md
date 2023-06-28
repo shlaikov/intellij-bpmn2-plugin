@@ -20,3 +20,13 @@
 
 ### Fixed
 - Initializing scheme handler for WebView.
+
+## [0.2.1] - 2023-06-27
+
+### Fixed
+-  Fixed icons in expUi.
+
+## [0.2.2] - 2023-06-28
+
+### Fixed
+-  Fixed GitHub build action
