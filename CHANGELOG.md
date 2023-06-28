@@ -25,3 +25,8 @@
 
 ### Fixed
 -  Fixed icons in expUi.
+
+## [0.2.2] - 2023-06-28
+
+### Fixed
+-  Fixed GitHub build action
