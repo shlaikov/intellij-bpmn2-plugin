@@ -1,10 +1,9 @@
 declare const window: Window &
     typeof globalThis & {
-        processMessageFromHost: (message: unknown) => void
-        sendMessageToHost: (message: unknown) => void
+        processMessageFromHost: (...args: any[]) => void
+        sendMessageToHost: (...args: any[]) => void
         bpmn2Data: {
             baseUrl: string;
-            lang: string;
             file: string;
             theme: string;
         };

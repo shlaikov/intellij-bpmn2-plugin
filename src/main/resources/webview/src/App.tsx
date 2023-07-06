@@ -3,6 +3,9 @@ import { useState, useEffect } from "react";
 import BPMNViewer from "./components/Viewer";
 import { exampleDiagram } from "./utils/exampleDiagram";
 import { ThemeType } from "./utils/theme";
+import Host from "./utils/host";
+
+(window as any).Host = new Host();
 
 function App() {
   const { bpmn2Data = {} }: any = window;

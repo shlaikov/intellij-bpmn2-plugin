@@ -1,7 +1,7 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <id>com.github.shlaikov.intellijbpmn2plugin</id>
-    <name>BPMN Modeler</name>
+    <name>BPMN Viewer - Free and OpenSource</name>
     <vendor>shlaikov</vendor>
 
     <depends>com.intellij.modules.platform</depends>
@@ -11,8 +11,12 @@
     <extensions defaultExtensionNs="com.intellij">
         <fileType name="bpmn" implementationClass="com.github.shlaikov.intellijbpmn2plugin.BPMN2FileType"
                   fieldName="INSTANCE" language="bpmn" extensions="bpmn;bpmn.xml;bpmn2" />
-        <lang.syntaxHighlighterFactory language="bpmn" implementationClass="com.intellij.lang.xml.XmlSyntaxHighlighterFactory" />
         <fileEditorProvider implementation="com.github.shlaikov.intellijbpmn2plugin.editor.EditorProvider" />
+
+        <lang.syntaxHighlighterFactory language="bpmn" implementationClass="com.intellij.lang.xml.XmlSyntaxHighlighterFactory" />
+        <lang.whiteSpaceFormattingStrategy language="bpmn"
+                                           implementationClass="com.intellij.lang.xml.XmlWhiteSpaceFormattingStrategy"/>
+
         <iconProvider implementation="com.github.shlaikov.intellijbpmn2plugin.icons.IconProvider" />
         <iconMapper mappingFile="BPMNIconMappings.json" />
     </extensions>

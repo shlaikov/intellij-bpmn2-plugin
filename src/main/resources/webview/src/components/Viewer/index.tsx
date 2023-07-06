@@ -4,7 +4,9 @@ import BaseViewer from "bpmn-js/lib/BaseViewer";
 
 import ZoomBar from "../ZoomBar";
 import ErrorBar, { EventError } from "../ErrorBar";
+import diagram from "../../modules/diagram";
 import THEME, { ThemeType, ITheme, getBackgroundColor } from "../../utils/theme";
+import HostEvent from "../../events/host";
 
 interface Props {
   xml: string;
@@ -40,6 +42,7 @@ function BPMNViewer({ xml, theme }: Props) {
     bpmnModelerRef.current = new NavigatedViewer({
       container: containerRef.current,
       bpmnRenderer: colorOptions,
+      additionalModules: [...diagram],
     });
 
     if (!error && xml) {
@@ -49,6 +52,8 @@ function BPMNViewer({ xml, theme }: Props) {
     bpmnModelerRef.current.get("canvas").viewbox(viewboxCache);
     bpmnModelerRef.current.on("import.done", (event: { error: EventError }) => {
       setError(null);
+
+      (window as any).sendMessageToHost(new HostEvent("init"));
 
       if (event.error) {
         setError(event.error);

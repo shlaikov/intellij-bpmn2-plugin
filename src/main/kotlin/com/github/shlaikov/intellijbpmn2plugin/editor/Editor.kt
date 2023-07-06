@@ -27,11 +27,9 @@ class Editor(project: Project, private val file: VirtualFile) : FileEditor, Dumb
     override fun getName(): String = "Diagram"
     override fun getFile() = file
 
-    private var view :WebView = WebView(lifetime)
+    private var view :WebView = WebView(lifetime, file)
 
     init {
-        view.initializeSchemeHandler(file)
-
         val messageBus = project.messageBus
 
         messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES,
@@ -77,10 +75,6 @@ class Editor(project: Project, private val file: VirtualFile) : FileEditor, Dumb
 
     override fun isValid(): Boolean {
         return true
-    }
-
-    private fun reloadView(ignoreCache: Boolean = true) {
-        view.reload(ignoreCache)
     }
 
     fun openDevTools() {
