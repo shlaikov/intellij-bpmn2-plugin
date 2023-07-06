@@ -1,16 +1,24 @@
 import { useState, useEffect, useRef } from "react";
 import NavigatedViewer from "bpmn-js/lib/NavigatedViewer";
+import BaseViewer from "bpmn-js/lib/BaseViewer";
 
 import ZoomBar from "../ZoomBar";
 import ErrorBar, { EventError } from "../ErrorBar";
+import diagram from "../../modules/diagram";
+import THEME, { ThemeType, ITheme, getBackgroundColor } from "../../utils/theme";
+import HostEvent from "../../events/host";
 
 interface Props {
   xml: string;
+  theme: ThemeType;
 }
 
-function BPMNViewer({ xml }: Props) {
-  const containerRef = useRef<HTMLDivElement>(null);
+function BPMNViewer({ xml, theme }: Props) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const bpmnModelerRef = useRef<NavigatedViewer | null>(null);
+
+  const [colorOptions, setColorOptions] = useState<ITheme>(theme === ThemeType.Light ? THEME.lightType : THEME.darkType);
+  const [viewboxCache, setViewboxCache] = useState<BaseViewer | null>(null);
 
   const [error, setError] = useState<EventError | null>(null);
 
@@ -33,14 +41,19 @@ function BPMNViewer({ xml }: Props) {
   useEffect(() => {
     bpmnModelerRef.current = new NavigatedViewer({
       container: containerRef.current,
+      bpmnRenderer: colorOptions,
+      additionalModules: [...diagram],
     });
 
     if (!error && xml) {
       importDiagram(xml);
     }
 
+    bpmnModelerRef.current.get("canvas").viewbox(viewboxCache);
     bpmnModelerRef.current.on("import.done", (event: { error: EventError }) => {
       setError(null);
+
+      (window as any).sendMessageToHost(new HostEvent("init"));
 
       if (event.error) {
         setError(event.error);
@@ -50,16 +63,27 @@ function BPMNViewer({ xml }: Props) {
     });
 
     return () => {
-      bpmnModelerRef.current?.destroy();
+      bpmnModelerRef.current?.detach();
     };
   });
+
+  useEffect(() => {
+    setViewboxCache(bpmnModelerRef.current?.get("canvas").viewbox());
+    setColorOptions(theme === ThemeType.Light ? THEME.lightType : THEME.darkType);
+  }, [theme]);
 
   return (
     <>
       <ErrorBar error={error} />
-      <ZoomBar zoomOut={zoomOut} zoomIn={zoomIn} zoomReset={zoomReset} />
+      <ZoomBar zoomOut={zoomOut} zoomIn={zoomIn} zoomReset={zoomReset} theme={theme} />
 
-      <div ref={containerRef} style={{ height: "100%" }} />
+      <div
+        ref={containerRef}
+        style={{
+          height: "100%",
+          backgroundColor: getBackgroundColor(theme),
+        }}
+      />
     </>
   );
 }

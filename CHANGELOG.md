@@ -24,9 +24,16 @@
 ## [0.2.1] - 2023-06-27
 
 ### Fixed
--  Fixed icons in expUi.
+- Fixed icons in expUi.
 
 ## [0.2.2] - 2023-06-28
 
 ### Fixed
--  Fixed GitHub build action
+- Fixed GitHub build action
+
+## [0.3.0] - 2023-07-06
+### Added
+- Dark mode
+
+### Fixed
+- Blnking Cef browser in dark mode

@@ -1,5 +1,7 @@
 package com.github.shlaikov.intellijbpmn2plugin.editor
 
+import com.intellij.openapi.editor.colors.EditorColorsListener
+import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorLocation
 import com.intellij.openapi.fileEditor.FileEditorState
@@ -25,11 +27,9 @@ class Editor(project: Project, private val file: VirtualFile) : FileEditor, Dumb
     override fun getName(): String = "Diagram"
     override fun getFile() = file
 
-    private var view :WebView = WebView(lifetime)
+    private var view :WebView = WebView(lifetime, file)
 
     init {
-        view.initializeSchemeHandler(file)
-
         val messageBus = project.messageBus
 
         messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES,
@@ -45,6 +45,10 @@ class Editor(project: Project, private val file: VirtualFile) : FileEditor, Dumb
                 }
             }
         )
+
+        messageBus.connect().subscribe(EditorColorsManager.TOPIC, EditorColorsListener {
+            view.reload(true)
+        })
     }
 
     override fun <T : Any?> getUserData(key: Key<T>): T? {

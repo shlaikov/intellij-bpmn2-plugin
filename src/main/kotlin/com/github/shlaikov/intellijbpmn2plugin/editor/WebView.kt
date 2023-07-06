@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.shlaikov.intellijbpmn2plugin.utils.LoadableJCEFHtmlPanel
 import com.github.shlaikov.intellijbpmn2plugin.utils.SchemeHandlerFactory
+import com.intellij.openapi.application.invokeLater
+import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.rd.util.lifetime.Lifetime
@@ -11,13 +13,14 @@ import com.intellij.ui.jcef.JBCefJSQuery
 import org.cef.CefApp
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
+import org.cef.handler.CefLifeSpanHandlerAdapter
 import org.cef.handler.CefLoadHandlerAdapter
 import org.jetbrains.concurrency.AsyncPromise
 import org.jetbrains.concurrency.Promise
 import java.net.URI
 
 
-class WebView(lifetime: Lifetime) {
+class WebView(lifetime: Lifetime, file: VirtualFile) {
     private val panel = LoadableJCEFHtmlPanel("https://bpmn2-plugin/index.html")
 
     val component = panel.component
@@ -32,9 +35,25 @@ class WebView(lifetime: Lifetime) {
         return _initializedPromise
     }
 
+    private fun handleEvent(event: IncomingMessage.Event) = when (event) {
+        is IncomingMessage.Event.Initialized -> {
+            _initializedPromise.setResult(Unit)
+
+            invokeLater {
+                panel.stopLoading()
+            }
+        }
+    }
+
     init {
         val jsRequestHandler = JBCefJSQuery.create(panel.browser).also { handler ->
-            handler.addHandler { _: String ->
+            handler.addHandler { request: String ->
+                val message = mapper.readValue(request, IncomingMessage::class.java)
+
+                if (message is IncomingMessage.Event) {
+                    this.handleEvent(message)
+                }
+
                 null
             }
 
@@ -44,13 +63,26 @@ class WebView(lifetime: Lifetime) {
             }
         }
 
+        object : CefLifeSpanHandlerAdapter() {
+            override fun onAfterCreated(browser: CefBrowser?) {
+                super.onAfterCreated(browser)
+
+                initializeSchemeHandler(file)
+            }
+        }.also { handler ->
+            panel.browser.jbCefClient.addLifeSpanHandler(handler, panel.browser.cefBrowser)
+
+            lifetime.onTerminationIfAlive {
+                panel.browser.jbCefClient.removeLifeSpanHandler(handler, panel.browser.cefBrowser)
+            }
+        }
+
         object : CefLoadHandlerAdapter() {
             override fun onLoadEnd(browser: CefBrowser?, frame: CefFrame?, httpStatusCode: Int) {
                 frame?.executeJavaScript(
-                    "window.sendMessageToHost = function(message) {" +
-                        jsRequestHandler.inject("message") +
-                    "};",
-                    frame.url, 0
+                "window.sendMessageToHost = function(message) {" +
+                    jsRequestHandler.inject("message") +
+                "};", frame.url, 0
                 )
             }
         }.also { handler ->
@@ -64,6 +96,8 @@ class WebView(lifetime: Lifetime) {
 
     fun initializeSchemeHandler(file: VirtualFile) {
         if (!didRegisterSchemeHandler) {
+            val theme = getEditorTheme()
+
             didRegisterSchemeHandler = true
 
             CefApp.getInstance().registerSchemeHandlerFactory(
@@ -72,8 +106,8 @@ class WebView(lifetime: Lifetime) {
                     if (uri.path == "/index.html") {
                         data class InitialData(
                             val baseUrl: String,
-                            val lang: String,
-                            val file: CharSequence
+                            val file: CharSequence,
+                            val theme: String
                         )
 
                         val text = WebView::class.java.getResourceAsStream("/webview/dist/index.html")!!.reader()
@@ -83,13 +117,16 @@ class WebView(lifetime: Lifetime) {
                             mapper.writeValueAsString(
                                 InitialData(
                                     "https://bpmn2-plugin",
-                                    "en",
-                                    LoadTextUtil.loadText(file)
+                                    LoadTextUtil.loadText(file),
+                                    theme.toString()
                                 )
                             )
                         )
-
-                        updatedText.byteInputStream()
+                        val result = updatedText.replace(
+                            "\$\$initialColor\$\$",
+                            if (theme == Theme.DARK) "black" else "white"
+                        )
+                        result.byteInputStream()
                     } else {
                         WebView::class.java.getResourceAsStream("/webview/dist" + uri.path)
                     }
@@ -106,5 +143,13 @@ class WebView(lifetime: Lifetime) {
 
     fun openDevTools() {
         panel.browser.openDevtools()
+    }
+
+    private fun getEditorTheme(): Theme {
+        if (EditorColorsManager.getInstance().isDarkEditor) {
+            return Theme.DARK
+        }
+
+        return Theme.LIGHT
     }
 }

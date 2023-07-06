@@ -6,8 +6,10 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.editor.EditorBundle
-import com.intellij.openapi.util.registry.Registry
+import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.registry.Registry
+import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLoadingPanel
 import com.intellij.ui.jcef.JBCefBrowserBase
 import com.intellij.ui.jcef.JCEFHtmlPanel
@@ -24,17 +26,15 @@ class LoadableJCEFHtmlPanel(
     url: String? = null, html: String? = null,
     var timeoutCallback: String? = EditorBundle.message("message.html.editor.timeout")
 ) : Disposable {
-    private val htmlPanelComponent = JCEFHtmlPanel(
-        false,
-        null,
-        null)
-
-    private val loadingPanel = JBLoadingPanel(BorderLayout(), this).apply {
-        setLoadingText(CommonBundle.getLoadingTreeNodeText())
-    }
+    private val isDarkEditor: Boolean = EditorColorsManager.getInstance().isDarkEditor
     private val alarm = Alarm(Alarm.ThreadToUse.SWING_THREAD, this)
 
-    val browser: JBCefBrowserBase get() = htmlPanelComponent
+    private val loadingPanel = JBLoadingPanel(BorderLayout(), this)
+    private val htmlPanel = JCEFHtmlPanel(false, null, url).apply {
+        setPageBackgroundColor(if (isDarkEditor) "#000" else "#fff")
+    }
+
+    val browser: JBCefBrowserBase get() = htmlPanel
     val component: JComponent get() = this.multiPanel
 
     companion object {
@@ -44,32 +44,43 @@ class LoadableJCEFHtmlPanel(
 
     private val multiPanel: MultiPanel = object : MultiPanel() {
         override fun create(key: Int) = when (key) {
-            LOADING_KEY -> loadingPanel
-            CONTENT_KEY -> htmlPanelComponent.component
-            else -> throw UnsupportedOperationException("Unknown key")
+            LOADING_KEY -> {
+                loadingPanel.apply {
+                    background = JBColor.PanelBackground
+                    setLoadingText(CommonBundle.getLoadingTreeNodeText())
+                }
+            }
+            CONTENT_KEY -> htmlPanel.component
+            else -> {
+                throw UnsupportedOperationException("Unknown key")
+            }
         }
     }
 
     init {
-        ApplicationManager.getApplication().invokeLater {
-            Disposer.register(this@LoadableJCEFHtmlPanel, alarm)
-        }
+        // White blinking Cause: https://youtrack.jetbrains.com/issue/IDEA-232927/JCEF-components-background-has-wrong-color-that-is-visible-when-opening-it-or-switching-to-it
+        multiPanel.isVisible = false
 
         if (url != null) {
-            htmlPanelComponent.loadURL(url)
+            htmlPanel.loadURL(url)
         }
 
         if (html != null) {
-            htmlPanelComponent.loadHTML(html)
+            htmlPanel.loadHTML(html)
         }
 
-        multiPanel.select(CONTENT_KEY, true)
+        ApplicationManager.getApplication().invokeLater {
+            Disposer.register(this@LoadableJCEFHtmlPanel, alarm)
+            multiPanel.select(CONTENT_KEY, true).also {
+                htmlPanel.createImmediately()
+            }
+        }
     }
 
     init {
-        htmlPanelComponent.jbCefClient.addLoadHandler(object : CefLoadHandlerAdapter() {
+        htmlPanel.jbCefClient.addLoadHandler(object : CefLoadHandlerAdapter() {
             override fun onLoadStart(browser: CefBrowser?, frame: CefFrame?, transitionType: CefRequest.TransitionType?) {
-                alarm.addRequest({ htmlPanelComponent.setHtml(timeoutCallback!!) }, Registry.intValue("html.editor.timeout", 10000))
+                alarm.addRequest({ htmlPanel.setHtml(timeoutCallback!!) }, Registry.intValue("html.editor.timeout", 20000))
             }
 
             override fun onLoadEnd(browser: CefBrowser?, frame: CefFrame?, httpStatusCode: Int) {
@@ -79,20 +90,27 @@ class LoadableJCEFHtmlPanel(
             override fun onLoadingStateChange(browser: CefBrowser?, isLoading: Boolean, canGoBack: Boolean, canGoForward: Boolean) {
                 if (isLoading) {
                     invokeLater {
-                        loadingPanel.startLoading()
-                        multiPanel.select(LOADING_KEY, true)
-                    }
-                } else {
-                    invokeLater {
-                        loadingPanel.stopLoading()
-                        multiPanel.select(CONTENT_KEY, true)
+                        startLoading()
                     }
                 }
             }
-        }, htmlPanelComponent.cefBrowser)
+        }, htmlPanel.cefBrowser)
+    }
+
+    fun startLoading() {
+        loadingPanel.startLoading()
+        multiPanel.select(LOADING_KEY, true)
+        multiPanel.isVisible = true
+    }
+
+    fun stopLoading() {
+        multiPanel.isVisible = true
+        multiPanel.select(CONTENT_KEY, true)
+        loadingPanel.stopLoading()
     }
 
     override fun dispose() {
+        multiPanel.isVisible = false
         alarm.dispose()
     }
 }
