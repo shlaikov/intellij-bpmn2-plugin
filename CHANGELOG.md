@@ -4,13 +4,10 @@
 
 ## [Unreleased]
 
-## [0.3.0] - 2023-07-06
+## [0.3.1] - 2023-07-11
 
 ### Added
-- Dark mode
-
-### Fixed
-- Blnking Cef browser in dark mode
+- Initial scaffold created from [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template)
 
 ## [0.1.0] - 2023-06-07
 
@@ -39,9 +36,18 @@
 ### Fixed
 - Fixed GitHub build action
 
-[Unreleased]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v0.3.0...HEAD
-[0.3.0]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v0.1.0...v0.3.0
-[0.2.2]: https://github.com/shlaikov/intellij-bpmn2-plugin/commits/v0.2.2
+## [0.3.0] - 2023-07-06
+
+### Added
+- Dark mode
+
+### Fixed
+- Blnking Cef browser in dark mode
+
+[Unreleased]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v0.1.0...v0.3.1
+[0.3.0]: https://github.com/shlaikov/intellij-bpmn2-plugin/commits/v0.3.0
+[0.2.2]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v0.3.0...v0.2.2
 [0.2.1]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v0.2.2...v0.2.1
 [0.2.0]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v0.2.1...v0.2.0
 [0.1.0]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v0.2.0...v0.1.0
