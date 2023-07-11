@@ -24,15 +24,9 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
-
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+ - OS and version: [e.g. macOS Ventura v13.4.1,Windows 11]
+ - IDEA type, version [e.g. Webstorm 2023.1.1, PHPStorm 2023.3]
+ - Plugin version [e.g. v0.3.1]
 
 **Additional context**
 Add any other context about the problem here.
