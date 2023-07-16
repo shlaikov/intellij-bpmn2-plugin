@@ -2,10 +2,6 @@
 
 # intellij-bpmn2-plugin Changelog
 
-## [Unreleased]
-### Added
-- Initial scaffold created from [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template)
-
 ## [0.1.0] - 2023-06-07
 ### Added
 - BPMN Viewer
