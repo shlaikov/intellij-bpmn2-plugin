@@ -59,7 +59,7 @@ class LoadableJCEFHtmlPanel(
 
     init {
         // White blinking Cause: https://youtrack.jetbrains.com/issue/IDEA-232927/JCEF-components-background-has-wrong-color-that-is-visible-when-opening-it-or-switching-to-it
-        multiPanel.isVisible = false
+//        multiPanel.isVisible = false
 
         if (url != null) {
             htmlPanel.loadURL(url)
@@ -71,9 +71,9 @@ class LoadableJCEFHtmlPanel(
 
         ApplicationManager.getApplication().invokeLater {
             Disposer.register(this@LoadableJCEFHtmlPanel, alarm)
-            multiPanel.select(CONTENT_KEY, true).also {
-                htmlPanel.createImmediately()
-            }
+
+            multiPanel.select(CONTENT_KEY, true)
+//            htmlPanel.createImmediately()
         }
     }
 
@@ -100,17 +100,17 @@ class LoadableJCEFHtmlPanel(
     fun startLoading() {
         loadingPanel.startLoading()
         multiPanel.select(LOADING_KEY, true)
-        multiPanel.isVisible = true
+//        multiPanel.isVisible = true
     }
 
     fun stopLoading() {
-        multiPanel.isVisible = true
+//        multiPanel.isVisible = true
         multiPanel.select(CONTENT_KEY, true)
         loadingPanel.stopLoading()
     }
 
     override fun dispose() {
-        multiPanel.isVisible = false
+//        multiPanel.isVisible = false
         alarm.dispose()
     }
 }

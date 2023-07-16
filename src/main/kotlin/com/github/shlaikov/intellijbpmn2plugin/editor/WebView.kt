@@ -38,10 +38,6 @@ class WebView(lifetime: Lifetime, file: VirtualFile) {
     private fun handleEvent(event: IncomingMessage.Event) = when (event) {
         is IncomingMessage.Event.Initialized -> {
             _initializedPromise.setResult(Unit)
-
-            invokeLater {
-                panel.stopLoading()
-            }
         }
     }
 
@@ -139,6 +135,10 @@ class WebView(lifetime: Lifetime, file: VirtualFile) {
         panel.browser.cefBrowser.reloadIgnoreCache()
     } else {
         panel.browser.cefBrowser.reload()
+    }
+
+    fun stopLoading() {
+        panel.stopLoading()
     }
 
     fun openDevTools() {

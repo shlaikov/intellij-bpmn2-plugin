@@ -49,6 +49,10 @@ class Editor(project: Project, private val file: VirtualFile) : FileEditor, Dumb
         messageBus.connect().subscribe(EditorColorsManager.TOPIC, EditorColorsListener {
             view.reload(true)
         })
+
+        view.initialized().then {
+            view.stopLoading()
+        }
     }
 
     override fun <T : Any?> getUserData(key: Key<T>): T? {

@@ -4,6 +4,7 @@ import BPMNViewer from "./components/Viewer";
 import { exampleDiagram } from "./utils/exampleDiagram";
 import { ThemeType } from "./utils/theme";
 import Host from "./utils/host";
+import HostEvent from "./events/host";
 
 (window as any).Host = new Host();
 
@@ -14,6 +15,8 @@ function App() {
   const [theme, setTheme] = useState<ThemeType>(bpmn2Data.theme);
 
   useEffect(() => {
+    (window as any).sendMessageToHost(new HostEvent("init"));
+
     setTheme(bpmn2Data.theme);
 
     if (bpmn2Data.file) {
