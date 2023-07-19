@@ -42,3 +42,8 @@
 
 ### Fixed
 - Fixed infinite loading
+
+
+## [0.4.0] - 2023-07-19
+### Added
+- Support for `bpmn20` and `bpmn20.xml` files
