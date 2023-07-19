@@ -4,7 +4,7 @@ import com.intellij.openapi.vfs.VirtualFile
 
 class File {
     companion object {
-        private val SUPPORTED_EXTENSIONS = arrayOf(".bpmn", ".bpmn.xml", ".bpmn2")
+        private val SUPPORTED_EXTENSIONS = arrayOf(".bpmn", ".bpmn.xml", ".bpmn2", ".bpmn20", ".bpmn20.xml")
 
         fun isBPMNFile(file: VirtualFile?): Boolean {
             if (file == null) {
