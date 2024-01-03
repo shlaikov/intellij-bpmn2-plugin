@@ -2,6 +2,14 @@
 
 # intellij-bpmn2-plugin Changelog
 
+## [Unreleased]
+
+## [0.6.0] - 2024-01-03
+
+### Fixed
+- Security update
+- Supported intellij 233.* +
+
 ## [0.1.0] - 2023-06-07
 
 ### Added
@@ -56,13 +64,8 @@
 - PostCSS line return parsing error Moderate
 - word-wrap vulnerable to Regular Expression Denial of Service
 
-## [0.6.0] - 2024-01-03
-
-### Fixed
-- Security update
-- Supported intellij 233.* +
-
-[Unreleased]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v0.1.0...v0.6.0
 [0.5.0]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v0.1.0...v0.5.0
 [0.4.0]: https://github.com/shlaikov/intellij-bpmn2-plugin/commits/v0.4.0
 [0.3.1]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v0.4.0...v0.3.1
