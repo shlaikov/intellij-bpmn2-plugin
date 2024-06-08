@@ -3,6 +3,7 @@ import NavigatedViewer from "bpmn-js/lib/NavigatedViewer";
 import BaseViewer from "bpmn-js/lib/BaseViewer";
 
 import ZoomBar from "../ZoomBar";
+import ErrorBoundary from "../ErrorBoundary";
 import ErrorBar, { EventError } from "../ErrorBar";
 import diagram from "../../modules/diagram";
 import THEME, { ThemeType, ITheme, getBackgroundColor } from "../../utils/theme";
@@ -68,6 +69,19 @@ function BPMNViewer({ xml, theme }: Props) {
     setViewboxCache(bpmnModelerRef.current?.get("canvas").viewbox());
     setColorOptions(theme === ThemeType.Light ? THEME.lightType : THEME.darkType);
   }, [theme]);
+
+  if (typeof xml !== 'string') {
+    return (
+      <div style={{
+        width: "100%",
+        height: "100%",
+        alignContent: "center",
+        backgroundColor: getBackgroundColor(theme),
+      }}>
+        <ErrorBoundary text="Unsupported file format" theme={theme} />
+      </div>
+    );
+  }
 
   return (
     <>

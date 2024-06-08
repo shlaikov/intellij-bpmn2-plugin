@@ -1,0 +1,13 @@
+.io-error-boundary {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: fit-content;
+  margin: 0 auto;
+  padding: 15px 60px;
+  background: #fafafa;
+  border-radius: 2px;
+  border: solid 1px #e0e0e0;
+  text-align: center;
+}
