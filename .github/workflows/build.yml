@@ -44,7 +44,7 @@ jobs:
 
       # Validate wrapper
       - name: Gradle Wrapper Validation
-        uses: gradle/wrapper-validation-action@v1.0.6
+        uses: gradle/actions/wrapper-validation@v3
 
       # Setup Java 11 environment for the next steps
       - name: Setup Java
@@ -87,13 +87,13 @@ jobs:
 
       # Upload Kover report to CodeCov
       - name: Upload Code Coverage Report
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           files: ${{ github.workspace }}/build/reports/kover/xml/report.xml
 
       # Cache Plugin Verifier IDEs
       - name: Setup Plugin Verifier IDEs Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.properties.outputs.pluginVerifierHomeDir }}/ides
           key: plugin-verifier-${{ hashFiles('build/listProductsReleases.txt') }}
