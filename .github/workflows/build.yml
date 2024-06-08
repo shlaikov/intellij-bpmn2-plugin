@@ -33,14 +33,14 @@ jobs:
     steps:
       # Free GitHub Actions Environment Disk Space
       - name: Maximize Build Space
-        run: |
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /usr/local/lib/android
-          sudo rm -rf /opt/ghc
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+          large-packages: false
 
       # Check out current repository
       - name: Fetch Sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Validate wrapper
       - name: Gradle Wrapper Validation
@@ -98,17 +98,6 @@ jobs:
           path: ${{ steps.properties.outputs.pluginVerifierHomeDir }}/ides
           key: plugin-verifier-${{ hashFiles('build/listProductsReleases.txt') }}
 
-      # Free GitHub Actions Environment Disk Space
-      - name: Maximize Build Space
-        uses: jlumbroso/free-disk-space@main
-        with:
-          tool-cache: false
-          large-packages: false
-
-      # Check out current repository
-      - name: Fetch Sources
-        uses: actions/checkout@v4
-
       # Run Verify Plugin task with Frontend builds and IntelliJ Plugin Verifier tool
       - name: Build Frontend and Run Plugin Verification tasks
         shell: bash
@@ -127,7 +116,9 @@ jobs:
 
       # Run Qodana inspections
       - name: Qodana - Code Inspection
-        uses: JetBrains/qodana-action@v2022.3.4
+        uses: JetBrains/qodana-action@v2024.1.5
+        with:
+          cache-default-branch-only: true
 
       # Prepare plugin archive content for creating artifact
       - name: Prepare Plugin Artifact
