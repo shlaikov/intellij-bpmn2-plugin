@@ -1,5 +1,6 @@
-import { ThemeType } from "../../utils/theme";
 import "./style.css";
+
+import { ThemeType } from "../../utils/theme";
 
 interface Props {
   zoomReset(): void;

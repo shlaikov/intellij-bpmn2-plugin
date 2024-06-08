@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.shlaikov.intellijbpmn2plugin.utils.LoadableJCEFHtmlPanel
 import com.github.shlaikov.intellijbpmn2plugin.utils.SchemeHandlerFactory
-import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -27,9 +26,6 @@ class WebView(lifetime: Lifetime, file: VirtualFile) {
 
     private var _initializedPromise = AsyncPromise<Unit>()
     private var didRegisterSchemeHandler = false
-    private val mapper = jacksonObjectMapper().apply {
-        configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-    }
 
     fun initialized(): Promise<Unit> {
         return _initializedPromise
@@ -90,6 +86,16 @@ class WebView(lifetime: Lifetime, file: VirtualFile) {
         }
     }
 
+    data class InitialData(
+        val baseUrl: String,
+        val file: String,
+        val theme: String
+    )
+
+    private val mapper = jacksonObjectMapper().apply {
+        configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    }
+
     fun initializeSchemeHandler(file: VirtualFile) {
         if (!didRegisterSchemeHandler) {
             val theme = getEditorTheme()
@@ -100,12 +106,6 @@ class WebView(lifetime: Lifetime, file: VirtualFile) {
                 "https", "bpmn2-plugin",
                 SchemeHandlerFactory { uri: URI ->
                     if (uri.path == "/index.html") {
-                        data class InitialData(
-                            val baseUrl: String,
-                            val file: CharSequence,
-                            val theme: String
-                        )
-
                         val text = WebView::class.java.getResourceAsStream("/webview/dist/index.html")!!.reader()
                             .readText()
                         val updatedText = text.replace(
@@ -113,7 +113,7 @@ class WebView(lifetime: Lifetime, file: VirtualFile) {
                             mapper.writeValueAsString(
                                 InitialData(
                                     "https://bpmn2-plugin",
-                                    LoadTextUtil.loadText(file),
+                                    LoadTextUtil.loadText(file).toString(),
                                     theme.toString()
                                 )
                             )
