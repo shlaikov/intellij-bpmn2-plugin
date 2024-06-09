@@ -70,7 +70,8 @@
 - Security update
 - Supported intellij 233.* +
 
-[Unreleased]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v0.1.0...v1.0.0
 [0.6.0]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v0.1.0...v0.6.0
 [0.5.0]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v0.1.0...v0.5.0
 [0.4.0]: https://github.com/shlaikov/intellij-bpmn2-plugin/commits/v0.4.0
