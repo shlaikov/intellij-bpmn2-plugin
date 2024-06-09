@@ -2,6 +2,14 @@
 
 # intellij-bpmn2-plugin Changelog
 
+## [Unreleased]
+
+## [1.0.0] - 2024-07-09
+
+### Fixed
+- IDEA cannot open xml error
+- Security update
+
 ## [0.1.0] - 2023-06-07
 
 ### Added
@@ -61,12 +69,6 @@
 ### Fixed
 - Security update
 - Supported intellij 233.* +
-
-## [1.0.0] - 2024-06-09
-
-### Fixed
-- IDEA cannot open xml error
-- Security update
 
 [Unreleased]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v0.6.0...HEAD
 [0.6.0]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v0.1.0...v0.6.0
