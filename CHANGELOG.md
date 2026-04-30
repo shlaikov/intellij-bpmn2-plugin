@@ -4,6 +4,17 @@
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-04-30
+
+### Fixed
+- CDATA in BPMN diagrams no longer breaks rendering (#24)
+- Async error capture in diagram import
+- Theme-aware loading panel background reduces flash on dark theme
+
+### Changed
+- Upgrade bpmn-js 13.1.0 → 17.8.1
+- Upgrade Kotlin, IntelliJ Platform Plugin, Kover, Qodana, Changelog plugins
+
 ## [1.0.0] - 2024-07-09
 
 ### Fixed
@@ -70,7 +81,8 @@
 - Security update
 - Supported intellij 233.* +
 
-[Unreleased]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v0.1.0...v1.0.0
 [0.6.0]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v0.1.0...v0.6.0
 [0.5.0]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v0.1.0...v0.5.0

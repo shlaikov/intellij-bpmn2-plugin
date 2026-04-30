@@ -6,13 +6,13 @@ fun properties(key: String) = providers.gradleProperty(key)
 fun environment(key: String) = providers.environmentVariable(key)
 
 plugins {
-    id("java") // Java support
-    id("com.github.node-gradle.node") version "5.0.0" // NodeJS support
-    alias(libs.plugins.kotlin) // Kotlin support
-    alias(libs.plugins.gradleIntelliJPlugin) // Gradle IntelliJ Plugin
-    alias(libs.plugins.changelog) // Gradle Changelog Plugin
-    alias(libs.plugins.qodana) // Gradle Qodana Plugin
-    alias(libs.plugins.kover) // Gradle Kover Plugin
+  id("java") // Java support
+  id("com.github.node-gradle.node") version "5.0.0" // NodeJS support
+  alias(libs.plugins.kotlin) // Kotlin support
+  alias(libs.plugins.gradleIntelliJPlugin) // Gradle IntelliJ Plugin
+  alias(libs.plugins.changelog) // Gradle Changelog Plugin
+  alias(libs.plugins.qodana) // Gradle Qodana Plugin
+  alias(libs.plugins.kover) // Gradle Kover Plugin
 }
 
 group = properties("pluginGroup").get()
@@ -20,7 +20,7 @@ version = properties("pluginVersion").get()
 
 // Configure project's dependencies
 repositories {
-    mavenCentral()
+  mavenCentral()
 }
 
 // Dependencies are managed with Gradle version catalog - read more: https://docs.gradle.org/current/userguide/platforms.html#sub:version-catalog
@@ -30,54 +30,52 @@ dependencies {
 
 // Set the JVM language level used to build the project. Use Java 11 for 2020.3+, and Java 17 for 2022.2+.
 kotlin {
-    jvmToolchain(11)
+  jvmToolchain(11)
 }
 
 // Set the Nodejs language
 node {
-    version.set("18.16.0")
-    distBaseUrl.set("https://nodejs.org/dist")
-    download.set(true)
-    yarnWorkDir.set(file("${project.projectDir}/.cache/yarn"))
-    nodeProjectDir.set(file("${project.projectDir}/src/main/resources/webview"))
+  version.set("18.16.0")
+  distBaseUrl.set("https://nodejs.org/dist")
+  download.set(true)
+  yarnWorkDir.set(file("${project.projectDir}/.cache/yarn"))
+  nodeProjectDir.set(file("${project.projectDir}/src/main/resources/webview"))
 }
 
 // Configure Gradle IntelliJ Plugin - read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
-    pluginName = properties("pluginName")
-    version = properties("platformVersion")
-    type = properties("platformType")
+  pluginName = properties("pluginName")
+  version = properties("platformVersion")
+  type = properties("platformType")
 
-    // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file.
-    plugins = properties("platformPlugins").map { it.split(',').map(String::trim).filter(String::isNotEmpty) }
+  // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file.
+  plugins = properties("platformPlugins").map { it.split(',').map(String::trim).filter(String::isNotEmpty) }
 }
 
 // Configure Gradle Changelog Plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin
 changelog {
-    groups.empty()
-    repositoryUrl = properties("pluginRepositoryUrl")
-}
-
-// Configure Gradle Qodana Plugin - read more: https://github.com/JetBrains/gradle-qodana-plugin
-qodana {
-    cachePath = provider { file(".qodana").canonicalPath }
-    reportPath = provider { file("build/reports/inspections").canonicalPath }
-    saveReport = true
-    showReport = environment("QODANA_SHOW_REPORT").map { it.toBoolean() }.getOrElse(false)
+  groups.empty()
+  repositoryUrl = properties("pluginRepositoryUrl")
 }
 
 // Configure Gradle Kover Plugin - read more: https://github.com/Kotlin/kotlinx-kover#configuration
-kover.xmlReport {
-    onCheck = true
+kover {
+  reports {
+    total {
+      xml {
+        onCheck = true
+      }
+    }
+  }
 }
 
 tasks.register<YarnTask>("buildYarn") {
-    dependsOn(tasks.yarn)
-    yarnCommand.set(listOf("run", "build"))
-    args.set(listOf(
-      "--out-dir", "${project.projectDir}/src/main/resources/webview/dist"
-    ))
-    inputs.dir("src/")
+  dependsOn(tasks.yarn)
+  yarnCommand.set(listOf("run", "build"))
+  args.set(listOf(
+    "--out-dir", "${project.projectDir}/src/main/resources/webview/dist"
+  ))
+  inputs.dir("src/")
 }
 
 tasks.register<Delete>("cleanYarnModules") {

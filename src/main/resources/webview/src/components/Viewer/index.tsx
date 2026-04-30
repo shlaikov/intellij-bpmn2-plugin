@@ -20,10 +20,16 @@ function BPMNViewer({ xml, theme }: Props) {
   const [colorOptions, setColorOptions] = useState<ITheme>(theme === ThemeType.Light ? THEME.lightType : THEME.darkType);
   const [viewboxCache, setViewboxCache] = useState<BaseViewer | null>(null);
 
-  const [error, setError] = useState<EventError | null>(null);
+  const [error, setError] = useState<EventError | Error | null>(null);
 
-  const importDiagram = (xml: string) => {
-    bpmnModelerRef.current?.importXML(xml);
+  const importDiagram = async (xml: string) => {
+    try {
+      await bpmnModelerRef.current?.importXML(xml);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error);
+      }
+    }
   };
 
   const zoomOut = (): void => {

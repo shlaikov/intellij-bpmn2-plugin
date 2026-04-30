@@ -15,7 +15,7 @@ export interface EventError {
 }
 
 interface Props {
-  error: EventError | null;
+  error: EventError | Error | null;
 }
 
 function InvalidState({ error }: Props) {

@@ -7,8 +7,8 @@ import com.github.shlaikov.intellijbpmn2plugin.utils.SchemeHandlerFactory
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.rd.util.lifetime.Lifetime
 import com.intellij.ui.jcef.JBCefJSQuery
+import com.jetbrains.rd.util.lifetime.Lifetime
 import org.cef.CefApp
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
@@ -26,6 +26,10 @@ class WebView(lifetime: Lifetime, file: VirtualFile) {
 
     private var _initializedPromise = AsyncPromise<Unit>()
     private var didRegisterSchemeHandler = false
+
+    private val mapper = jacksonObjectMapper().apply {
+        configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    }
 
     fun initialized(): Promise<Unit> {
         return _initializedPromise
@@ -91,10 +95,6 @@ class WebView(lifetime: Lifetime, file: VirtualFile) {
         val file: String,
         val theme: String
     )
-
-    private val mapper = jacksonObjectMapper().apply {
-        configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-    }
 
     fun initializeSchemeHandler(file: VirtualFile) {
         if (!didRegisterSchemeHandler) {

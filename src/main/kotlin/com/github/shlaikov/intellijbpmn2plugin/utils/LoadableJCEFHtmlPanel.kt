@@ -19,6 +19,7 @@ import org.cef.browser.CefFrame
 import org.cef.handler.CefLoadHandlerAdapter
 import org.cef.network.CefRequest
 import java.awt.BorderLayout
+import java.awt.Color
 import javax.swing.JComponent
 
 
@@ -31,7 +32,9 @@ class LoadableJCEFHtmlPanel(
 
     private val loadingPanel = JBLoadingPanel(BorderLayout(), this)
     private val htmlPanel = JCEFHtmlPanel(false, null, url).apply {
-        setPageBackgroundColor(if (isDarkEditor) "#000" else "#fff")
+        setPageBackgroundColor(if (isDarkEditor) "#000000" else "#FFFFFF")
+        component.background = if (isDarkEditor) Color.BLACK else Color.WHITE
+        component.isOpaque = true
     }
 
     val browser: JBCefBrowserBase get() = htmlPanel
@@ -42,11 +45,13 @@ class LoadableJCEFHtmlPanel(
         private const val CONTENT_KEY = 0
     }
 
+    private val themeBackground: JBColor = JBColor(Color.WHITE, Color.BLACK)
+
     private val multiPanel: MultiPanel = object : MultiPanel() {
         override fun create(key: Int) = when (key) {
             LOADING_KEY -> {
                 loadingPanel.apply {
-                    background = JBColor.PanelBackground
+                    background = themeBackground
                     setLoadingText(CommonBundle.getLoadingTreeNodeText())
                 }
             }
@@ -58,9 +63,6 @@ class LoadableJCEFHtmlPanel(
     }
 
     init {
-        // White blinking Cause: https://youtrack.jetbrains.com/issue/IDEA-232927/JCEF-components-background-has-wrong-color-that-is-visible-when-opening-it-or-switching-to-it
-//        multiPanel.isVisible = false
-
         if (url != null) {
             htmlPanel.loadURL(url)
         }
@@ -73,11 +75,8 @@ class LoadableJCEFHtmlPanel(
             Disposer.register(this@LoadableJCEFHtmlPanel, alarm)
 
             multiPanel.select(CONTENT_KEY, true)
-//            htmlPanel.createImmediately()
         }
-    }
 
-    init {
         htmlPanel.jbCefClient.addLoadHandler(object : CefLoadHandlerAdapter() {
             override fun onLoadStart(browser: CefBrowser?, frame: CefFrame?, transitionType: CefRequest.TransitionType?) {
                 alarm.addRequest({ htmlPanel.setHtml(timeoutCallback!!) }, Registry.intValue("html.editor.timeout", 20000))
@@ -100,17 +99,14 @@ class LoadableJCEFHtmlPanel(
     fun startLoading() {
         loadingPanel.startLoading()
         multiPanel.select(LOADING_KEY, true)
-//        multiPanel.isVisible = true
     }
 
     fun stopLoading() {
-//        multiPanel.isVisible = true
         multiPanel.select(CONTENT_KEY, true)
         loadingPanel.stopLoading()
     }
 
     override fun dispose() {
-//        multiPanel.isVisible = false
         alarm.dispose()
     }
 }
