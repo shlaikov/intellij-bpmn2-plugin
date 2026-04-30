@@ -35,7 +35,7 @@ kotlin {
 
 // Set the Nodejs language
 node {
-  version.set("18.16.0")
+  version.set("20.18.0")
   distBaseUrl.set("https://nodejs.org/dist")
   download.set(true)
   yarnWorkDir.set(file("${project.projectDir}/.cache/yarn"))
