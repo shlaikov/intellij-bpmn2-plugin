@@ -2,7 +2,7 @@
 <idea-plugin>
     <id>com.github.shlaikov.intellijbpmn2plugin</id>
     <name>BPMN Viewer - Free and OpenSource</name>
-    <vendor>shlaikov</vendor>
+    <vendor email="alexikz31@gmail.com" url="https://github.com/shlaikov">Alexey Shlaikov</vendor>
 
     <depends>com.intellij.modules.platform</depends>
 
