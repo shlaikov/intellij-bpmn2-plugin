@@ -129,6 +129,10 @@ tasks {
         }
   }
 
+  runPluginVerifier {
+    ideVersions = listOf("IC-2024.1", "IC-2024.2", "IC-2024.3")
+  }
+
   // Configure UI tests plugin
   // Read more: https://github.com/JetBrains/intellij-ui-test-robot
   runIdeForUiTests {
