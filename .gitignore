@@ -4,6 +4,8 @@
 .vscode
 .qodana
 .kotlin
+.intellijPlatform
+.DS_Store
 build
 bin
 node_modules

@@ -8,12 +8,18 @@
 
 ### Fixed
 - Compatibility with IntelliJ IDEA 2026.2+: implement new JCEF `CefResourceHandler` methods (`open`, `read`, `skip`) — fixes `AbstractMethodError` when opening BPMN files
+- Remove `Registry.intValue` call replaced by literal — avoids `Kotlin.Registry.Companion` reference on older IDEs
 
 ### Changed
 - Bump platform SDK to 2026.2 EAP (262.6228.19)
 - Raise minimum supported IDE to 2024.1 (pluginSinceBuild 221 → 241)
 - Bump Kotlin 1.9.24 → 2.3.0, JVM toolchain 11 → 17
+- Migrate to IntelliJ Platform Gradle Plugin 2.5.0 (legacy `org.jetbrains.intellij` 1.x → `org.jetbrains.intellij.platform` 2.x)
+- Bump Gradle wrapper 8.1 → 8.10
 - Replace removed `MockVirtualFileSystem` in tests with `LightVirtualFile`
+
+### Removed
+- Dead code: unregistered `BPMNParserDefinition` and `BPMNFile` (no `lang.parserDefinition` extension in plugin.xml — never instantiated)
 
 ## [1.1.0] - 2026-04-30
 

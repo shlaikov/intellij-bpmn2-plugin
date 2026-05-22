@@ -8,7 +8,6 @@ import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.editor.EditorBundle
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLoadingPanel
 import com.intellij.ui.jcef.JBCefBrowserBase
@@ -79,7 +78,7 @@ class LoadableJCEFHtmlPanel(
 
         htmlPanel.jbCefClient.addLoadHandler(object : CefLoadHandlerAdapter() {
             override fun onLoadStart(browser: CefBrowser?, frame: CefFrame?, transitionType: CefRequest.TransitionType?) {
-                alarm.addRequest({ htmlPanel.setHtml(timeoutCallback!!) }, Registry.intValue("html.editor.timeout", 20000))
+                alarm.addRequest({ htmlPanel.setHtml(timeoutCallback!!) }, 20000)
             }
 
             override fun onLoadEnd(browser: CefBrowser?, frame: CefFrame?, httpStatusCode: Int) {
