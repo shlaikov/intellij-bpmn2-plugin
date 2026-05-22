@@ -1,5 +1,6 @@
 package com.github.shlaikov.intellijbpmn2plugin.editor
 
+import com.github.shlaikov.intellijbpmn2plugin.notifications.RatingNotification
 import com.intellij.openapi.editor.colors.EditorColorsListener
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.fileEditor.FileEditor
@@ -53,6 +54,8 @@ class Editor(project: Project, private val file: VirtualFile) : FileEditor, Dumb
         view.initialized().then {
             view.stopLoading()
         }
+
+        RatingNotification.trackOpenAndMaybePrompt(project)
     }
 
     override fun <T : Any?> getUserData(key: Key<T>): T? {

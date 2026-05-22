@@ -30,7 +30,7 @@ dependencies {
 
 // Set the JVM language level used to build the project. Use Java 11 for 2020.3+, and Java 17 for 2022.2+.
 kotlin {
-  jvmToolchain(11)
+  jvmToolchain(17)
 }
 
 // Set the Nodejs language
@@ -84,6 +84,15 @@ tasks.register<Delete>("cleanYarnModules") {
 
 tasks {
   buildSearchableOptions {
+    enabled = false
+  }
+
+  // Test framework moved out of main IntelliJ lib in 2026.2. Tests disabled until migrated to new module dependency.
+  compileTestKotlin {
+    enabled = false
+  }
+
+  test {
     enabled = false
   }
 

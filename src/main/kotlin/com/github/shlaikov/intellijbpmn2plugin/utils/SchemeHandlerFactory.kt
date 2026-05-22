@@ -3,9 +3,13 @@ package com.github.shlaikov.intellijbpmn2plugin.utils
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.callback.CefCallback
+import org.cef.callback.CefResourceReadCallback
+import org.cef.callback.CefResourceSkipCallback
 import org.cef.callback.CefSchemeHandlerFactory
 import org.cef.handler.CefResourceHandler
+import org.cef.misc.BoolRef
 import org.cef.misc.IntRef
+import org.cef.misc.LongRef
 import org.cef.misc.StringRef
 import org.cef.network.CefRequest
 import org.cef.network.CefResponse
@@ -19,6 +23,12 @@ class SchemeHandlerFactory(val getStream: (uri: URI) -> InputStream?) : CefSchem
         val myStream: InputStream? = getStream(uri)
 
         return object : CefResourceHandler {
+            override fun open(request: CefRequest, handleRequest: BoolRef, callback: CefCallback): Boolean {
+                handleRequest.set(true)
+                return true
+            }
+
+            @Suppress("OVERRIDE_DEPRECATION", "DEPRECATION")
             override fun processRequest(req: CefRequest, callback: CefCallback): Boolean {
                 callback.Continue()
                 return true
@@ -42,7 +52,7 @@ class SchemeHandlerFactory(val getStream: (uri: URI) -> InputStream?) : CefSchem
                 }
             }
 
-            override fun readResponse(dataOut: ByteArray, bytesToRead: Int, bytesRead: IntRef, callback: CefCallback): Boolean {
+            private fun readChunk(dataOut: ByteArray, bytesToRead: Int, bytesRead: IntRef): Boolean {
                 if (myStream === null) {
                     bytesRead.set(0)
                     return false
@@ -64,6 +74,21 @@ class SchemeHandlerFactory(val getStream: (uri: URI) -> InputStream?) : CefSchem
                 } catch (ex: IOException) {
                     return false
                 }
+            }
+
+            override fun read(dataOut: ByteArray, bytesToRead: Int, bytesRead: IntRef, callback: CefResourceReadCallback): Boolean {
+                return readChunk(dataOut, bytesToRead, bytesRead)
+            }
+
+            @Suppress("OVERRIDE_DEPRECATION", "DEPRECATION")
+            override fun readResponse(dataOut: ByteArray, bytesToRead: Int, bytesRead: IntRef, callback: CefCallback): Boolean {
+                return readChunk(dataOut, bytesToRead, bytesRead)
+            }
+
+            override fun skip(bytesToSkip: Long, bytesSkipped: LongRef, callback: CefResourceSkipCallback): Boolean {
+                bytesSkipped.set(-2L)
+                callback.Continue(-2L)
+                return false
             }
 
             override fun cancel() {}

@@ -4,7 +4,7 @@ import com.github.shlaikov.intellijbpmn2plugin.editor.EditorProvider
 import com.intellij.ide.highlighter.XmlFileType
 import com.intellij.openapi.components.service
 import com.intellij.openapi.command.impl.DummyProject
-import com.intellij.mock.MockVirtualFileSystem
+import com.intellij.testFramework.LightVirtualFile
 import com.intellij.psi.xml.XmlFile
 import com.intellij.testFramework.TestDataPath
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -44,7 +44,6 @@ class PluginTest : BasePlatformTestCase() {
     fun `test accept() method`() {
         val editorProvider = EditorProvider()
         val project = DummyProject.getInstance()
-        val vFS = MockVirtualFileSystem()
 
         val testCases = mapOf(
             "test.svg" to false,
@@ -59,8 +58,7 @@ class PluginTest : BasePlatformTestCase() {
         )
 
         testCases.forEach { (filename, expectedResult) ->
-            vFS.file(filename,"")
-            val file = vFS.findFileByPath(filename)
+            val file = LightVirtualFile(filename, "")
 
             assert(expectedResult == editorProvider.accept(project, file))
         }

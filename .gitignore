@@ -3,6 +3,7 @@
 .idea
 .vscode
 .qodana
+.kotlin
 build
 bin
 node_modules

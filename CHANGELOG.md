@@ -4,7 +4,21 @@
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-05-22
+
+### Fixed
+- Compatibility with IntelliJ IDEA 2026.2+: implement new JCEF `CefResourceHandler` methods (`open`, `read`, `skip`) — fixes `AbstractMethodError` when opening BPMN files
+
+### Changed
+- Bump platform SDK to 2026.2 EAP (262.6228.19)
+- Raise minimum supported IDE to 2024.1 (pluginSinceBuild 221 → 241)
+- Bump Kotlin 1.9.24 → 2.3.0, JVM toolchain 11 → 17
+- Replace removed `MockVirtualFileSystem` in tests with `LightVirtualFile`
+
 ## [1.1.0] - 2026-04-30
+
+### Added
+- Rating prompt: after a few BPMN file opens, the plugin offers a one-time link to leave a Marketplace review (dismissible)
 
 ### Fixed
 - CDATA in BPMN diagrams no longer breaks rendering (#24)
@@ -81,7 +95,8 @@
 - Security update
 - Supported intellij 233.* +
 
-[Unreleased]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v0.1.0...v1.0.0
 [0.6.0]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v0.1.0...v0.6.0

@@ -9,6 +9,8 @@
     <resource-bundle>messages.BPMN2Bundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
+        <notificationGroup id="BPMN2 Plugin Rating" displayType="STICKY_BALLOON" />
+
         <fileType name="bpmn" implementationClass="com.github.shlaikov.intellijbpmn2plugin.BPMN2FileType"
                   fieldName="INSTANCE" language="bpmn" extensions="bpmn;bpmn.xml;bpmn2;bpmn;bpmn20.xml;bpmn20" />
         <fileEditorProvider implementation="com.github.shlaikov.intellijbpmn2plugin.editor.EditorProvider" />
