@@ -46,12 +46,12 @@ jobs:
       - name: Gradle Wrapper Validation
         uses: gradle/actions/wrapper-validation@v3
 
-      # Setup Java 11 environment for the next steps
+      # Setup Java 17 environment for the next steps (IntelliJ Platform Gradle Plugin 2.x requires 17+)
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: zulu
-          java-version: 11
+          java-version: 17
 
       # Set environment variables
       - name: Export Properties
@@ -70,8 +70,6 @@ jobs:
           echo "changelog<<EOF" >> $GITHUB_OUTPUT
           echo "$CHANGELOG" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
-
-          ./gradlew listProductsReleases # prepare list of IDEs for Plugin Verifier
 
       # Run tests
       - name: Run Tests
@@ -96,7 +94,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ steps.properties.outputs.pluginVerifierHomeDir }}/ides
-          key: plugin-verifier-${{ hashFiles('build/listProductsReleases.txt') }}
+          key: plugin-verifier-${{ hashFiles('build.gradle.kts', 'gradle/libs.versions.toml') }}
 
       # Run Verify Plugin task with Frontend builds and IntelliJ Plugin Verifier tool
       - name: Build Frontend and Run Plugin Verification tasks

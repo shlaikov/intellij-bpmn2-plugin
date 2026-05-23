@@ -23,12 +23,12 @@ jobs:
         with:
           ref: ${{ github.event.release.tag_name }}
 
-      # Set up Java environment for the next steps
+      # Set up Java environment for the next steps (IntelliJ Platform Gradle Plugin 2.x requires 17+)
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: zulu
-          java-version: 11
+          java-version: 17
 
       # Setup Gradle
       - name: Setup Gradle
