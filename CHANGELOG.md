@@ -7,10 +7,12 @@
 ## [1.2.0] - 2026-05-22
 
 ### Fixed
+
 - Compatibility with IntelliJ IDEA 2026.2+: implement new JCEF `CefResourceHandler` methods (`open`, `read`, `skip`) — fixes `AbstractMethodError` when opening BPMN files
 - Remove `Registry.intValue` call replaced by literal — avoids `Kotlin.Registry.Companion` reference on older IDEs
 
 ### Changed
+
 - Bump platform SDK to 2026.2 EAP (262.6228.19)
 - Raise minimum supported IDE to 2024.1 (pluginSinceBuild 221 → 241)
 - Bump Kotlin 1.9.24 → 2.3.0, JVM toolchain 11 → 17
@@ -19,31 +21,37 @@
 - Replace removed `MockVirtualFileSystem` in tests with `LightVirtualFile`
 
 ### Removed
+
 - Dead code: unregistered `BPMNParserDefinition` and `BPMNFile` (no `lang.parserDefinition` extension in plugin.xml — never instantiated)
 
 ## [1.1.0] - 2026-04-30
 
 ### Added
+
 - Rating prompt: after a few BPMN file opens, the plugin offers a one-time link to leave a Marketplace review (dismissible)
 
 ### Fixed
+
 - CDATA in BPMN diagrams no longer breaks rendering (#24)
 - Async error capture in diagram import
 - Theme-aware loading panel background reduces flash on dark theme
 
 ### Changed
+
 - Upgrade bpmn-js 13.1.0 → 17.8.1
 - Upgrade Kotlin, IntelliJ Platform Plugin, Kover, Qodana, Changelog plugins
 
 ## [1.0.0] - 2024-07-09
 
 ### Fixed
+
 - IDEA cannot open xml error
 - Security update
 
 ## [0.1.0] - 2023-06-07
 
 ### Added
+
 - BPMN Viewer
 - Validation and error handling in panel
 - Add .bpmn files to IDEA
@@ -51,53 +59,64 @@
 ## [0.2.0] - 2023-06-12
 
 ### Added
+
 - Update issue templates
 - Supported dark theme icon
 - Change canvas state after XML editing.
 
 ### Fixed
+
 - Initializing scheme handler for WebView.
 
 ## [0.2.1] - 2023-06-27
 
 ### Fixed
+
 - Fixed icons in expUi.
 
 ## [0.2.2] - 2023-06-28
 
 ### Fixed
+
 - Fixed GitHub build action
 
 ## [0.3.0] - 2023-07-06
 
 ### Added
+
 - Dark mode
 
 ### Fixed
+
 - Blnking Cef browser in dark mode
 
 ## [0.3.1] - 2023-07-16
 
 ### Fixed
+
 - Fixed infinite loading
 
 ## [0.4.0] - 2023-07-19
 
 ### Added
+
 - Support for `bpmn20` and `bpmn20.xml` files
 
 ## [0.5.0] - 2023-10-16
 
 ### Added
+
 - Supported new 232.* version
 
 ### Fixed
+
 - PostCSS line return parsing error Moderate
 - word-wrap vulnerable to Regular Expression Denial of Service
 
 ## [0.6.0] - 2024-01-03
 
 ### Fixed
+
 - Security update
 - Supported intellij 233.* +
 
