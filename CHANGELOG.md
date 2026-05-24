@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+## [1.2.2] - 2026-05-24
+
+### Fixed
+- Hotfix: revert `SchemeHandlerFactory` to the 1.2.0 anonymous-class implementation. The 1.2.1 `java.lang.reflect.Proxy` refactor caused diagrams to load indefinitely on IntelliJ IDEA 2026.1.2 (Windows). The dual override (`processRequest`/`readResponse` for older JCEF, `open`/`read`/`skip` for 2026.2+) is restored, accepting cosmetic Marketplace verifier warnings on 2025.x in exchange for working runtime everywhere.
+
 ## [1.2.1] - 2026-05-24
 
 ### Fixed
@@ -106,7 +111,8 @@
 - Security update
 - Supported intellij 233.* +
 
-[Unreleased]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v1.2.1...HEAD
+[Unreleased]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v1.2.2...HEAD
+[1.2.2]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v1.0.0...v1.1.0
