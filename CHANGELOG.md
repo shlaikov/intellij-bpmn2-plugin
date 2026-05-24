@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-05-24
+
+### Fixed
+- Restore compatibility with IntelliJ IDEA 2024.1 – 2025.2: a single plugin binary now cleanly covers 2024.1 through 2026.2+.
+
 ## [1.2.0] - 2026-05-22
 
 ### Fixed
@@ -101,7 +106,8 @@
 - Security update
 - Supported intellij 233.* +
 
-[Unreleased]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v1.2.1...HEAD
+[1.2.1]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v0.1.0...v1.0.0
