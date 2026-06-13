@@ -7,29 +7,35 @@
 ## [1.2.3] - 2026-06-13
 
 ### Fixed
+
 - Plugin Verifier "class not found" (`CefResourceReadCallback`, `CefResourceSkipCallback`, `LongRef`) on IntelliJ IDEA 2026.1: stop hand-implementing JCEF `CefResourceHandler` and delegate resource serving to the platform's own `com.intellij.ui.jcef.utils.JBCefStreamResourceHandler`, which JetBrains compiles per IDE build against whichever `CefResourceHandler` shape exists. Clean verification across 2024.1 – 2026.2 and no more deprecated-API warnings.
 - Drop internal-API usage `EditorBundle.message(...)` (flagged by the verifier) in favour of a plugin-owned timeout string.
 
 ### Changed
+
 - Raise minimum supported IDE to 2025.1 (`pluginSinceBuild` 241 → 251). `JBCefStreamResourceHandler` was introduced in 2025.1; 2024.1–2024.3 lack it. Those users keep the last compatible published 1.2.x build.
 
 ## [1.2.2] - 2026-05-24
 
 ### Fixed
+
 - Hotfix: revert `SchemeHandlerFactory` to the 1.2.0 anonymous-class implementation. The 1.2.1 `java.lang.reflect.Proxy` refactor caused diagrams to load indefinitely on IntelliJ IDEA 2026.1.2 (Windows). The dual override (`processRequest`/`readResponse` for older JCEF, `open`/`read`/`skip` for 2026.2+) is restored, accepting cosmetic Marketplace verifier warnings on 2025.x in exchange for working runtime everywhere.
 
 ## [1.2.1] - 2026-05-24
 
 ### Fixed
+
 - Restore compatibility with IntelliJ IDEA 2024.1 – 2025.2: a single plugin binary now cleanly covers 2024.1 through 2026.2+.
 
 ## [1.2.0] - 2026-05-22
 
 ### Fixed
+
 - Compatibility with IntelliJ IDEA 2026.2+: implement new JCEF `CefResourceHandler` methods (`open`, `read`, `skip`) — fixes `AbstractMethodError` when opening BPMN files
 - Remove `Registry.intValue` call replaced by literal — avoids `Kotlin.Registry.Companion` reference on older IDEs
 
 ### Changed
+
 - Bump platform SDK to 2026.2 EAP (262.6228.19)
 - Raise minimum supported IDE to 2024.1 (pluginSinceBuild 221 → 241)
 - Bump Kotlin 1.9.24 → 2.3.0, JVM toolchain 11 → 17
@@ -38,31 +44,37 @@
 - Replace removed `MockVirtualFileSystem` in tests with `LightVirtualFile`
 
 ### Removed
+
 - Dead code: unregistered `BPMNParserDefinition` and `BPMNFile` (no `lang.parserDefinition` extension in plugin.xml — never instantiated)
 
 ## [1.1.0] - 2026-04-30
 
 ### Added
+
 - Rating prompt: after a few BPMN file opens, the plugin offers a one-time link to leave a Marketplace review (dismissible)
 
 ### Fixed
+
 - CDATA in BPMN diagrams no longer breaks rendering (#24)
 - Async error capture in diagram import
 - Theme-aware loading panel background reduces flash on dark theme
 
 ### Changed
+
 - Upgrade bpmn-js 13.1.0 → 17.8.1
 - Upgrade Kotlin, IntelliJ Platform Plugin, Kover, Qodana, Changelog plugins
 
 ## [1.0.0] - 2024-07-09
 
 ### Fixed
+
 - IDEA cannot open xml error
 - Security update
 
 ## [0.1.0] - 2023-06-07
 
 ### Added
+
 - BPMN Viewer
 - Validation and error handling in panel
 - Add .bpmn files to IDEA
@@ -70,57 +82,69 @@
 ## [0.2.0] - 2023-06-12
 
 ### Added
+
 - Update issue templates
 - Supported dark theme icon
 - Change canvas state after XML editing.
 
 ### Fixed
+
 - Initializing scheme handler for WebView.
 
 ## [0.2.1] - 2023-06-27
 
 ### Fixed
+
 - Fixed icons in expUi.
 
 ## [0.2.2] - 2023-06-28
 
 ### Fixed
+
 - Fixed GitHub build action
 
 ## [0.3.0] - 2023-07-06
 
 ### Added
+
 - Dark mode
 
 ### Fixed
+
 - Blnking Cef browser in dark mode
 
 ## [0.3.1] - 2023-07-16
 
 ### Fixed
+
 - Fixed infinite loading
 
 ## [0.4.0] - 2023-07-19
 
 ### Added
+
 - Support for `bpmn20` and `bpmn20.xml` files
 
 ## [0.5.0] - 2023-10-16
 
 ### Added
+
 - Supported new 232.* version
 
 ### Fixed
+
 - PostCSS line return parsing error Moderate
 - word-wrap vulnerable to Regular Expression Denial of Service
 
 ## [0.6.0] - 2024-01-03
 
 ### Fixed
+
 - Security update
 - Supported intellij 233.* +
 
-[Unreleased]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v1.2.2...HEAD
+[Unreleased]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v1.2.3...HEAD
+[1.2.3]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/shlaikov/intellij-bpmn2-plugin/compare/v1.1.0...v1.2.0
