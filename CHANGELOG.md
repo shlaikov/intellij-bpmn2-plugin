@@ -4,6 +4,15 @@
 
 ## [Unreleased]
 
+## [1.2.3] - 2026-06-13
+
+### Fixed
+- Plugin Verifier "class not found" (`CefResourceReadCallback`, `CefResourceSkipCallback`, `LongRef`) on IntelliJ IDEA 2026.1: stop hand-implementing JCEF `CefResourceHandler` and delegate resource serving to the platform's own `com.intellij.ui.jcef.utils.JBCefStreamResourceHandler`, which JetBrains compiles per IDE build against whichever `CefResourceHandler` shape exists. Clean verification across 2024.1 – 2026.2 and no more deprecated-API warnings.
+- Drop internal-API usage `EditorBundle.message(...)` (flagged by the verifier) in favour of a plugin-owned timeout string.
+
+### Changed
+- Raise minimum supported IDE to 2025.1 (`pluginSinceBuild` 241 → 251). `JBCefStreamResourceHandler` was introduced in 2025.1; 2024.1–2024.3 lack it. Those users keep the last compatible published 1.2.x build.
+
 ## [1.2.2] - 2026-05-24
 
 ### Fixed

@@ -43,7 +43,7 @@ Node ≥20 required (bpmn-js 17.x transitive `domify@3.0.0` engine constraint). 
 5. `build.yml` (push to main) creates **draft** release with built zip
 6. User publishes draft via GH UI → `release.yml` runs `publishPlugin` to JetBrains Marketplace (needs `PUBLISH_TOKEN`, `PRIVATE_KEY`, `PRIVATE_KEY_PASSWORD`, `CERTIFICATE_CHAIN` secrets)
 
-`runPluginVerifier` pinned to `IC-2024.1`/`2024.2`/`2024.3` — default behavior tries unreleased EAP IDEs.
+`verifyPlugin` pinned to `IC-2025.1`/`2025.2` (see `build.gradle.kts` `pluginVerification.ides`) — default behavior tries unreleased EAP IDEs. 2026.1/2026.2 aren't pinned because the verifier can't resolve them as fixed release artifacts (2026.1 has no `.pom`, 262 is an EAP snapshot that gets GC'd); compatibility there is covered by compiling against the 262 EAP SDK. Minimum supported IDE is 2025.1 (`pluginSinceBuild = 251`): resource serving delegates to platform `com.intellij.ui.jcef.utils.JBCefStreamResourceHandler`, which only exists in 2025.1+.
 
 ## Marketplace compliance
 

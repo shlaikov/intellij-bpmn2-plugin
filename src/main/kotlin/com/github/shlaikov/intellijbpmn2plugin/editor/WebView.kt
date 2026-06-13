@@ -104,7 +104,7 @@ class WebView(lifetime: Lifetime, file: VirtualFile) {
 
             CefApp.getInstance().registerSchemeHandlerFactory(
                 "https", "bpmn2-plugin",
-                SchemeHandlerFactory { uri: URI ->
+                SchemeHandlerFactory(panel) { uri: URI ->
                     if (uri.path == "/index.html") {
                         val text = WebView::class.java.getResourceAsStream("/webview/dist/index.html")!!.reader()
                             .readText()
