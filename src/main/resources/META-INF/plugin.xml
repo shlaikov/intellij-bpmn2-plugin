@@ -5,6 +5,10 @@
     <vendor email="shlaikov.alexey@ya.ru" url="https://github.com/shlaikov">Alexey Shlaikov</vendor>
 
     <depends>com.intellij.modules.platform</depends>
+    <!-- 2026.2+: JCEF lives in the bundled "Web Browser (JCEF)" plugin and must be declared explicitly.
+         Optional so the single binary keeps loading on 2025.1 - 2025.3.0, where this id does not exist
+         and JCEF is still part of the core platform. -->
+    <depends optional="true" config-file="bpmn2-jcef.xml">com.intellij.modules.jcef</depends>
 
     <resource-bundle>messages.BPMN2Bundle</resource-bundle>
 

@@ -4,6 +4,15 @@
 
 ## [Unreleased]
 
+## [1.2.4] - 2026-10-22
+
+### Fixed
+- `NoClassDefFoundError: com/intellij/ui/jcef/JCEFHtmlPanel` on IntelliJ IDEA 2026.2+ when opening a BPMN file (#35). Since 2026.2 JCEF ships as a separate bundled plugin (*Web Browser (JCEF)*, `com.intellij.modules.jcef`); the plugin now declares that dependency. It is declared as optional so the same build keeps working on 2025.1 – 2025.3, where JCEF is still part of the core platform.
+
+### Changed
+- Build against the released 2026.2.3 SDK instead of the 262 EAP snapshot (which is no longer available in the JetBrains repository).
+- Plugin Verifier now also checks IntelliJ IDEA 2026.1 and 2026.2 in addition to 2025.1 and 2025.2.
+
 ## [1.2.3] - 2026-06-13
 
 ### Fixed

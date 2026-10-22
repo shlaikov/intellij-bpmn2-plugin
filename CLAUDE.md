@@ -43,7 +43,13 @@ Node ≥20 required (bpmn-js 17.x transitive `domify@3.0.0` engine constraint). 
 5. `build.yml` (push to main) creates **draft** release with built zip
 6. User publishes draft via GH UI → `release.yml` runs `publishPlugin` to JetBrains Marketplace (needs `PUBLISH_TOKEN`, `PRIVATE_KEY`, `PRIVATE_KEY_PASSWORD`, `CERTIFICATE_CHAIN` secrets)
 
-`verifyPlugin` pinned to `IC-2025.1`/`2025.2` (see `build.gradle.kts` `pluginVerification.ides`) — default behavior tries unreleased EAP IDEs. 2026.1/2026.2 aren't pinned because the verifier can't resolve them as fixed release artifacts (2026.1 has no `.pom`, 262 is an EAP snapshot that gets GC'd); compatibility there is covered by compiling against the 262 EAP SDK. Minimum supported IDE is 2025.1 (`pluginSinceBuild = 251`): resource serving delegates to platform `com.intellij.ui.jcef.utils.JBCefStreamResourceHandler`, which only exists in 2025.1+.
+`verifyPlugin` pinned to IC `2025.1`, `2025.2` (installers) and `2026.1.5`, `2026.2.3` (`useInstaller = false`, Maven artifacts — IJP 2.5.0 can't locate the renamed 2026.x installer dmgs; same reason `create(...)` uses `useInstaller = false`). Don't use EAP snapshots for `platformVersion`: JetBrains GC's them and the build silently breaks later (happened with `262.6228.19-EAP-SNAPSHOT`); always a released version like `2026.2.3`. Minimum supported IDE is 2025.1 (`pluginSinceBuild = 251`): resource serving delegates to platform `com.intellij.ui.jcef.utils.JBCefStreamResourceHandler`, which only exists in 2025.1+.
+
+`buildYarn` on macOS fails *after* producing `webview/dist` with a configuration-cache error (`uname -m` from the node plugin). The dist is still built; CI (Linux) is unaffected.
+
+## JCEF dependency (2026.2+)
+
+Since IntelliJ 2026.2 JCEF is a separate bundled plugin, *Web Browser (JCEF)*, id `com.intellij.modules.jcef`. Without declaring it the plugin classloader can't see `com.intellij.ui.jcef.*` → `NoClassDefFoundError: JCEFHtmlPanel` (#35). Declared in `plugin.xml` as `<depends optional="true" config-file="bpmn2-jcef.xml">` — **optional on purpose**: the id only exists since 2025.3.1, a hard `<depends>` would stop the plugin loading on 2025.1 – 2025.3.0. `bpmn2-jcef.xml` is intentionally empty; all extensions stay in `plugin.xml`. `build.gradle.kts` adds `bundledPlugin("com.intellij.modules.jcef")` for the compile classpath. Known consequence: on 2026.2+ with the Web Browser (JCEF) plugin disabled the editor fails the same way — acceptable. Plugin Verifier reports the unresolved optional dependency on 2025.x as info, not an error.
 
 ## Marketplace compliance
 

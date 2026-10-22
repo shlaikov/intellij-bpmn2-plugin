@@ -30,6 +30,8 @@ repositories {
 dependencies {
   intellijPlatform {
     create(properties("platformType"), properties("platformVersion"), useInstaller = false)
+    // 2026.2+: JCEF is a separate bundled plugin; needed on the compile classpath.
+    bundledPlugin("com.intellij.modules.jcef")
     pluginVerifier()
     zipSigner()
   }
@@ -98,6 +100,9 @@ intellijPlatform {
     ides {
       ide(IntelliJPlatformType.IntellijIdeaCommunity, "2025.1")
       ide(IntelliJPlatformType.IntellijIdeaCommunity, "2025.2")
+      // 2026.x: IJP 2.5.0 can't locate the renamed installer artifacts, resolve from the Maven repository instead.
+      ide(IntelliJPlatformType.IntellijIdeaCommunity, "2026.1.5", useInstaller = false)
+      ide(IntelliJPlatformType.IntellijIdeaCommunity, "2026.2.3", useInstaller = false)
     }
   }
 

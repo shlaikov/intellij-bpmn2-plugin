@@ -1,0 +1,4 @@
+<!-- Activates the optional com.intellij.modules.jcef dependency on IntelliJ Platform 2026.2+, where JCEF
+     ships as a separate bundled plugin ("Web Browser (JCEF)"). Nothing is registered here on purpose:
+     all extensions stay in plugin.xml so older IDEs (JCEF in core) keep the same behaviour. -->
+<idea-plugin/>
