@@ -9,6 +9,13 @@ declare const window: Window &
         };
     }
 
+interface Window {
+    /** Installed by the Viewer; the Kotlin host calls it with precise wheel deltas in OSR mode. */
+    bpmn2Wheel?: (dx: number, dy: number, x: number, y: number, ctrl: boolean, meta: boolean) => void;
+    /** Installed by the Viewer; the Kotlin host forwards macOS trackpad pinch gestures here. */
+    bpmn2Pinch?: (phase: "start" | "move" | "end", magnification: number, x: number, y: number) => void;
+}
+
 declare module 'bpmn-js/lib/NavigatedViewer' {
     export default class BpmnJS {
         constructor(options?: {

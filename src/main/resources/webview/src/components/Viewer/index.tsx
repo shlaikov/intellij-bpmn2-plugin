@@ -13,6 +13,12 @@ interface Props {
   theme: ThemeType;
 }
 
+// diagram-js ZoomScroll defaults (lib/navigation/zoomscroll/ZoomScroll.js)
+const SCROLL_SCALE = 0.75;
+const ZOOM_FACTOR = 0.02;
+const ZOOM_MIN = 0.2;
+const ZOOM_MAX = 4;
+
 function BPMNViewer({ xml, theme }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const bpmnModelerRef = useRef<NavigatedViewer | null>(null);
@@ -66,7 +72,47 @@ function BPMNViewer({ xml, theme }: Props) {
       zoomReset();
     });
 
+    // Off-screen JCEF (2026.2+, and most 2025.x setups) can't deliver usable wheel events to the page,
+    // so the Kotlin host intercepts them and calls this with precise deltas. See LoadableJCEFHtmlPanel.
+    window.bpmn2Wheel = (dx, dy, x, y, ctrl, meta) => {
+      const viewer = bpmnModelerRef.current;
+      const container = containerRef.current;
+      if (!viewer || !container) return;
+
+      const zoomScroll = viewer.get("zoomScroll");
+      if (ctrl || meta) {
+        const rect = container.getBoundingClientRect();
+        const delta = -SCROLL_SCALE * ZOOM_FACTOR * Math.hypot(dx, dy) * Math.sign(dy || dx);
+        zoomScroll.zoom(delta, { x: x - rect.left, y: y - rect.top });
+      } else {
+        zoomScroll.scroll({ dx: -SCROLL_SCALE * dx, dy: -SCROLL_SCALE * dy });
+      }
+    };
+
+    // macOS trackpad pinch, delivered by the IDE's gesture support via the Kotlin host (ZoomableViewport).
+    // `magnification` is the sum of per-event magnifications since the gesture started; Apple's convention
+    // is to compound `scale *= 1 + m` per event, which is exp(sum) to first order.
+    let pinchStart: { scale: number; at: { x: number; y: number } } | null = null;
+    window.bpmn2Pinch = (phase, magnification, x, y) => {
+      const viewer = bpmnModelerRef.current;
+      const container = containerRef.current;
+      if (!viewer || !container) return;
+
+      const canvas = viewer.get("canvas");
+      if (phase === "start") {
+        const rect = container.getBoundingClientRect();
+        pinchStart = { scale: canvas.zoom(), at: { x: x - rect.left, y: y - rect.top } };
+      } else if (phase === "move" && pinchStart) {
+        const scale = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, pinchStart.scale * Math.exp(magnification)));
+        canvas.zoom(scale, pinchStart.at);
+      } else if (phase === "end") {
+        pinchStart = null;
+      }
+    };
+
     return () => {
+      delete window.bpmn2Pinch;
+      delete window.bpmn2Wheel;
       bpmnModelerRef.current?.detach();
     };
   });

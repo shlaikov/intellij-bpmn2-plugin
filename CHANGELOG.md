@@ -8,6 +8,8 @@
 
 ### Fixed
 - `NoClassDefFoundError: com/intellij/ui/jcef/JCEFHtmlPanel` on IntelliJ IDEA 2026.2+ when opening a BPMN file (#35). Since 2026.2 JCEF ships as a separate bundled plugin (*Web Browser (JCEF)*, `com.intellij.modules.jcef`); the plugin now declares that dependency. It is declared as optional so the same build keeps working on 2025.1 – 2025.3, where JCEF is still part of the core platform.
+- Trackpad and mouse-wheel navigation in off-screen JCEF mode (forced on 2026.2+ and most 2025.x setups): horizontal two-finger scrolling did nothing and vertical scrolling was jumpy because the platform forwards wheel events to CEF with an integer-rounded ×40 delta and puts macOS horizontal scrolling into `deltaX` + `shiftKey`, which diagram-js ignores. The plugin now intercepts wheel events itself and feeds precise deltas to the viewer.
+- macOS trackpad pinch-to-zoom now zooms the diagram around the pointer (delivered through the IDE's gesture support via `ZoomableViewport`; JCEF never receives the gesture).
 
 ### Changed
 - Build against the released 2026.2.3 SDK instead of the 262 EAP snapshot (which is no longer available in the JetBrains repository).
