@@ -4,6 +4,9 @@
 
 ## [Unreleased]
 
+### Changed
+- Stop using the deprecated `DynamicBundle(String)` constructor (Plugin Verifier warning on IntelliJ IDEA 2026.3); the message bundle is now created with its owning class.
+
 ## [1.2.5] - 2026-11-16
 
 ### Fixed
