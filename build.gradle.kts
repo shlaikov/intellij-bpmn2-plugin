@@ -103,6 +103,7 @@ intellijPlatform {
       // 2026.x: IJP 2.5.0 can't locate the renamed installer artifacts, resolve from the Maven repository instead.
       ide(IntelliJPlatformType.IntellijIdeaCommunity, "2026.1.5", useInstaller = false)
       ide(IntelliJPlatformType.IntellijIdeaCommunity, "2026.2.3", useInstaller = false)
+      ide(IntelliJPlatformType.IntellijIdeaCommunity, "2026.3", useInstaller = false)
     }
   }
 

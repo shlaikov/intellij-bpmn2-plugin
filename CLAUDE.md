@@ -43,7 +43,7 @@ Node ≥20 required (bpmn-js 17.x transitive `domify@3.0.0` engine constraint). 
 5. `build.yml` (push to main) creates **draft** release with built zip
 6. User publishes draft via GH UI → `release.yml` runs `publishPlugin` to JetBrains Marketplace (needs `PUBLISH_TOKEN`, `PRIVATE_KEY`, `PRIVATE_KEY_PASSWORD`, `CERTIFICATE_CHAIN` secrets)
 
-`verifyPlugin` pinned to IC `2025.1`, `2025.2` (installers) and `2026.1.5`, `2026.2.3` (`useInstaller = false`, Maven artifacts — IJP 2.5.0 can't locate the renamed 2026.x installer dmgs; same reason `create(...)` uses `useInstaller = false`). Don't use EAP snapshots for `platformVersion`: JetBrains GC's them and the build silently breaks later (happened with `262.6228.19-EAP-SNAPSHOT`); always a released version like `2026.2.3`. Minimum supported IDE is 2025.1 (`pluginSinceBuild = 251`): resource serving delegates to platform `com.intellij.ui.jcef.utils.JBCefStreamResourceHandler`, which only exists in 2025.1+.
+`verifyPlugin` pinned to IC `2025.1`, `2025.2` (installers) and `2026.1.5`, `2026.2.3`, `2026.3` (`useInstaller = false`, Maven artifacts — IJP 2.5.0 can't locate the renamed 2026.x installer dmgs; same reason `create(...)` uses `useInstaller = false`). Don't use EAP snapshots for `platformVersion`: JetBrains GC's them and the build silently breaks later (happened with `262.6228.19-EAP-SNAPSHOT`); always a released version like `2026.2.3`. Minimum supported IDE is 2025.1 (`pluginSinceBuild = 251`): resource serving delegates to platform `com.intellij.ui.jcef.utils.JBCefStreamResourceHandler`, which only exists in 2025.1+.
 
 `buildYarn` on macOS fails *after* producing `webview/dist` with a configuration-cache error (`uname -m` from the node plugin). The dist is still built; CI (Linux) is unaffected.
 
@@ -80,4 +80,4 @@ Marketplace plugin id: `21952` (URL: https://plugins.jetbrains.com/plugin/21952)
 - Kotlin: 4-space indent (existing), 2-space in `build.gradle.kts`
 - React/TS: 2-space, prefer `async/await` for promises
 - `importDiagram` in Viewer must `await bpmn-js importXML` and catch — it returns Promise, sync `try/catch` misses async rejections
-- Don't introduce Jackson XML or kotlin-module-jackson; default `jacksonObjectMapper()` works fine for the tiny `InitialData` payload
+- No JSON library on the Kotlin side — not Jackson, Gson or kotlinx.serialization from the IDE classpath. Which libraries the platform exposes to plugins changes between releases: `jacksonObjectMapper()` worked until 2026.3 dropped `jackson-module-kotlin` from the plugin classloader (`NoClassDefFoundError`, #37). `InitialData.toJson()` / `String.toJsonString()` and `IncomingMessage.parse` in `editor/WebMessage.kt` hand-roll the tiny payloads; `toJsonString` also escapes `<`, `>`, `&` because the JSON is inlined into a `<script>` block

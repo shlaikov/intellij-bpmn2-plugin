@@ -4,6 +4,15 @@
 
 ## [Unreleased]
 
+## [1.2.5] - 2026-11-16
+
+### Fixed
+- `NoClassDefFoundError: com/fasterxml/jackson/module/kotlin/ExtensionsKt` on IntelliJ IDEA 2026.3 when opening a BPMN file (#37). The plugin relied on the Jackson Kotlin module that older IDEs happened to expose to plugins; 2026.3 no longer does. Jackson is no longer used at all: the small payload exchanged with the viewer is serialized by the plugin itself, so the same build works on 2025.1 – 2026.3.
+- A BPMN file containing `</script>` or `<!--` in its text (e.g. inside documentation or a script task) could break the viewer page; such characters are now escaped when the file is handed to the viewer.
+
+### Changed
+- Plugin Verifier now also checks IntelliJ IDEA 2026.3.
+
 ## [1.2.4] - 2026-10-22
 
 ### Fixed

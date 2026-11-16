@@ -1,7 +1,5 @@
 package com.github.shlaikov.intellijbpmn2plugin.editor
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.shlaikov.intellijbpmn2plugin.utils.LoadableJCEFHtmlPanel
 import com.github.shlaikov.intellijbpmn2plugin.utils.SchemeHandlerFactory
 import com.intellij.openapi.editor.colors.EditorColorsManager
@@ -27,10 +25,6 @@ class WebView(lifetime: Lifetime, file: VirtualFile) {
     private var _initializedPromise = AsyncPromise<Unit>()
     private var didRegisterSchemeHandler = false
 
-    private val mapper = jacksonObjectMapper().apply {
-        configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-    }
-
     fun initialized(): Promise<Unit> {
         return _initializedPromise
     }
@@ -44,7 +38,7 @@ class WebView(lifetime: Lifetime, file: VirtualFile) {
     init {
         val jsRequestHandler = JBCefJSQuery.create(panel.browser).also { handler ->
             handler.addHandler { request: String ->
-                val message = mapper.readValue(request, IncomingMessage::class.java)
+                val message = IncomingMessage.parse(request)
 
                 if (message is IncomingMessage.Event) {
                     this.handleEvent(message)
@@ -94,7 +88,10 @@ class WebView(lifetime: Lifetime, file: VirtualFile) {
         val baseUrl: String,
         val file: String,
         val theme: String
-    )
+    ) {
+        fun toJson(): String =
+            "{\"baseUrl\":${baseUrl.toJsonString()},\"file\":${file.toJsonString()},\"theme\":${theme.toJsonString()}}"
+    }
 
     fun initializeSchemeHandler(file: VirtualFile) {
         if (!didRegisterSchemeHandler) {
@@ -110,13 +107,11 @@ class WebView(lifetime: Lifetime, file: VirtualFile) {
                             .readText()
                         val updatedText = text.replace(
                             "\$\$initialData\$\$",
-                            mapper.writeValueAsString(
-                                InitialData(
-                                    "https://bpmn2-plugin",
-                                    LoadTextUtil.loadText(file).toString(),
-                                    theme.toString()
-                                )
-                            )
+                            InitialData(
+                                "https://bpmn2-plugin",
+                                LoadTextUtil.loadText(file).toString(),
+                                theme.toString()
+                            ).toJson()
                         )
                         val result = updatedText.replace(
                             "\$\$initialColor\$\$",
