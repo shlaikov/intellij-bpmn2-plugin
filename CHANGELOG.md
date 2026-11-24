@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-11-24
+
 ### Added
 - DMN support (#29): `.dmn` files open in the viewer, rendered with dmn-js. The decision requirements diagram, decision tables, literal and boxed expressions are shown in separate tabs; the diagram supports the same zoom, pan and pinch navigation as BPMN, and tables scroll with the wheel or trackpad. DMN 1.1 and 1.2 files are upgraded to 1.3 in memory for display. Follows the IDE theme.
 - A file icon and XML highlighting for `.dmn` files.

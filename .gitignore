@@ -9,3 +9,6 @@
 build
 bin
 node_modules
+
+# Local MCP server config written by the IDE (machine-specific port)
+.mcp.json
