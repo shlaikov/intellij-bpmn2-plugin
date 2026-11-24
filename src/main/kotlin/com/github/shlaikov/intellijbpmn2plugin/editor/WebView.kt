@@ -1,150 +1,155 @@
 package com.github.shlaikov.intellijbpmn2plugin.editor
 
+import com.github.shlaikov.intellijbpmn2plugin.diagram.DiagramKind
 import com.github.shlaikov.intellijbpmn2plugin.utils.LoadableJCEFHtmlPanel
-import com.github.shlaikov.intellijbpmn2plugin.utils.SchemeHandlerFactory
-import com.intellij.openapi.editor.colors.EditorColorsManager
-import com.intellij.openapi.fileEditor.impl.LoadTextUtil
+import com.intellij.ide.BrowserUtil
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.invokeLater
+import com.intellij.openapi.diagnostic.debug
+import com.intellij.openapi.diagnostic.logger
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.jcef.JBCefJSQuery
-import com.jetbrains.rd.util.lifetime.Lifetime
-import org.cef.CefApp
+import org.cef.CefSettings
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
+import org.cef.handler.CefDisplayHandlerAdapter
 import org.cef.handler.CefLifeSpanHandlerAdapter
+import org.cef.handler.CefLoadHandler
 import org.cef.handler.CefLoadHandlerAdapter
-import org.jetbrains.concurrency.AsyncPromise
-import org.jetbrains.concurrency.Promise
-import java.net.URI
+import javax.swing.JComponent
 
+/**
+ * One diagram page: a JCEF browser showing the webview for [file], rendered as [kind].
+ * [text] supplies the diagram source for every (re)load; it is called on a CEF thread.
+ * Everything it creates is disposed together with it.
+ */
+class WebView(
+    private val file: VirtualFile,
+    private val kind: DiagramKind,
+    private val text: () -> CharSequence
+) : Disposable {
+    private val panel = LoadableJCEFHtmlPanel(DiagramResources.open(this, ::renderIndex))
 
-class WebView(lifetime: Lifetime, file: VirtualFile) {
-    private val panel = LoadableJCEFHtmlPanel("https://bpmn2-plugin/index.html")
+    private val jsQuery = JBCefJSQuery.create(panel.browser)
 
-    val component = panel.component
+    /** JS statement that delivers the variable `message` (a JSON string) to [IncomingMessage.parse]. */
+    private val sendToHost = jsQuery.inject("message")
 
-    private var _initializedPromise = AsyncPromise<Unit>()
-    private var didRegisterSchemeHandler = false
-
-    fun initialized(): Promise<Unit> {
-        return _initializedPromise
-    }
-
-    private fun handleEvent(event: IncomingMessage.Event) = when (event) {
-        is IncomingMessage.Event.Initialized -> {
-            _initializedPromise.setResult(Unit)
-        }
-    }
+    val component: JComponent get() = panel.component
 
     init {
-        val jsRequestHandler = JBCefJSQuery.create(panel.browser).also { handler ->
-            handler.addHandler { request: String ->
-                val message = IncomingMessage.parse(request)
+        // Children are disposed in reverse registration order: handlers and the JS query go before the browser.
+        Disposer.register(this, panel)
 
-                if (message is IncomingMessage.Event) {
-                    this.handleEvent(message)
+        val browser = panel.browser
+        val client = browser.jbCefClient
+
+        Disposer.register(this, jsQuery)
+        jsQuery.addHandler { request: String ->
+            when (IncomingMessage.parse(request)) {
+                IncomingMessage.Event.Initialized -> {
+                    LOG.debug { "${file.name}: webview is ready" }
+                    invokeLater { panel.stopLoading() }
+                }
+                null -> Unit
+            }
+
+            null
+        }
+
+        val lifeSpanHandler = object : CefLifeSpanHandlerAdapter() {
+            override fun onAfterCreated(browser: CefBrowser?) = DiagramResources.install()
+
+            /**
+             * Links in the page (the bpmn.io logo, links in a diagram's documentation) go to the system browser.
+             * A JCEF popup would share this browser's client, so its load events would be taken for the
+             * diagram's own and bring the loading indicator back for good.
+             */
+            override fun onBeforePopup(
+                browser: CefBrowser?, frame: CefFrame?, targetUrl: String?, targetFrameName: String?
+            ): Boolean {
+                if (targetUrl != null && (targetUrl.startsWith("https://") || targetUrl.startsWith("http://"))) {
+                    invokeLater { BrowserUtil.browse(targetUrl) }
                 }
 
-                null
+                return true
             }
-
-            lifetime.onTerminationIfAlive {
-                handler.dispose()
-                panel.dispose()
+        }
+        val loadHandler = object : CefLoadHandlerAdapter() {
+            override fun onLoadError(
+                browser: CefBrowser?, frame: CefFrame?, errorCode: CefLoadHandler.ErrorCode?,
+                errorText: String?, failedUrl: String?
+            ) {
+                // ERR_ABORTED is routine: the browser's initial navigation is superseded by the explicit load.
+                if (errorCode != CefLoadHandler.ErrorCode.ERR_ABORTED) {
+                    LOG.warn("${file.name}: failed to load $failedUrl: $errorCode $errorText")
+                }
             }
         }
 
-        object : CefLifeSpanHandlerAdapter() {
-            override fun onAfterCreated(browser: CefBrowser?) {
-                super.onAfterCreated(browser)
+        // The page's console ends up in idea.log when debug logging is on for the plugin (see CLAUDE.md).
+        val displayHandler = object : CefDisplayHandlerAdapter() {
+            override fun onConsoleMessage(
+                browser: CefBrowser?, level: CefSettings.LogSeverity?, message: String?, source: String?, line: Int
+            ): Boolean {
+                LOG.debug { "${file.name}: console [$level] $message ($source:$line)" }
 
-                initializeSchemeHandler(file)
-            }
-        }.also { handler ->
-            panel.browser.jbCefClient.addLifeSpanHandler(handler, panel.browser.cefBrowser)
-
-            lifetime.onTerminationIfAlive {
-                panel.browser.jbCefClient.removeLifeSpanHandler(handler, panel.browser.cefBrowser)
+                return false
             }
         }
 
-        object : CefLoadHandlerAdapter() {
-            override fun onLoadEnd(browser: CefBrowser?, frame: CefFrame?, httpStatusCode: Int) {
-                frame?.executeJavaScript(
-                "window.sendMessageToHost = function(message) {" +
-                    jsRequestHandler.inject("message") +
-                "};", frame.url, 0
-                )
-            }
-        }.also { handler ->
-            panel.browser.jbCefClient.addLoadHandler(handler, panel.browser.cefBrowser)
-
-            lifetime.onTerminationIfAlive {
-                panel.browser.jbCefClient.removeLoadHandler(handler, panel.browser.cefBrowser)
-            }
+        client.addLifeSpanHandler(lifeSpanHandler, browser.cefBrowser)
+        client.addLoadHandler(loadHandler, browser.cefBrowser)
+        client.addDisplayHandler(displayHandler, browser.cefBrowser)
+        Disposer.register(this) {
+            client.removeDisplayHandler(displayHandler, browser.cefBrowser)
+            client.removeLoadHandler(loadHandler, browser.cefBrowser)
+            client.removeLifeSpanHandler(lifeSpanHandler, browser.cefBrowser)
         }
     }
 
-    data class InitialData(
-        val baseUrl: String,
-        val file: String,
-        val theme: String
-    ) {
+    /** The data handed to the webview as `window.bpmn2Data`. */
+    private class InitialData(val kind: DiagramKind, val file: String, val theme: Theme) {
         fun toJson(): String =
-            "{\"baseUrl\":${baseUrl.toJsonString()},\"file\":${file.toJsonString()},\"theme\":${theme.toJsonString()}}"
+            "{\"kind\":${kind.id.toJsonString()},\"file\":${file.toJsonString()},\"theme\":${theme.id.toJsonString()}}"
     }
 
-    fun initializeSchemeHandler(file: VirtualFile) {
-        if (!didRegisterSchemeHandler) {
-            val theme = getEditorTheme()
+    /**
+     * Called for every (re)load of the page, so it always reflects the text and the IDE theme as they are now.
+     *
+     * The webview -> host function is part of the page itself rather than injected once the page has loaded:
+     * an injected script races with the page's own code and, on a fast reload, can miss the new document
+     * altogether — the page would then never be able to report that it is ready.
+     */
+    private fun renderIndex(template: String): String {
+        val theme = Theme.current()
 
-            didRegisterSchemeHandler = true
-
-            CefApp.getInstance().registerSchemeHandlerFactory(
-                "https", "bpmn2-plugin",
-                SchemeHandlerFactory(panel) { uri: URI ->
-                    if (uri.path == "/index.html") {
-                        val text = WebView::class.java.getResourceAsStream("/webview/dist/index.html")!!.reader()
-                            .readText()
-                        val updatedText = text.replace(
-                            "\$\$initialData\$\$",
-                            InitialData(
-                                "https://bpmn2-plugin",
-                                LoadTextUtil.loadText(file).toString(),
-                                theme.toString()
-                            ).toJson()
-                        )
-                        val result = updatedText.replace(
-                            "\$\$initialColor\$\$",
-                            if (theme == Theme.DARK) "black" else "white"
-                        )
-                        result.byteInputStream()
-                    } else {
-                        WebView::class.java.getResourceAsStream("/webview/dist" + uri.path)
-                    }
-                }
-            ).also { successful -> assert(successful) }
+        // One pass over the template, so nothing inside the substituted file text is treated as a placeholder.
+        return PLACEHOLDER.replace(template) { match ->
+            when (match.groupValues[1]) {
+                "initialData" -> InitialData(kind, text().toString(), theme).toJson()
+                "initialColor" -> theme.background
+                "sendToHost" -> sendToHost
+                else -> match.value
+            }
         }
     }
 
-    fun reload(ignoreCache: Boolean = false) = if (ignoreCache) {
+    fun reload() {
         panel.browser.cefBrowser.reloadIgnoreCache()
-    } else {
-        panel.browser.cefBrowser.reload()
-    }
-
-    fun stopLoading() {
-        panel.stopLoading()
     }
 
     fun openDevTools() {
         panel.browser.openDevtools()
     }
 
-    private fun getEditorTheme(): Theme {
-        if (EditorColorsManager.getInstance().isDarkEditor) {
-            return Theme.DARK
-        }
+    override fun dispose() {
+        LOG.debug { "${file.name}: disposed" }
+    }
 
-        return Theme.LIGHT
+    private companion object {
+        val LOG = logger<WebView>()
+        val PLACEHOLDER = Regex("""\$\$(\w+)\$\$""")
     }
 }

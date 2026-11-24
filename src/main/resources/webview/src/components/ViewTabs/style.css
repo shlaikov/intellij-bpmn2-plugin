@@ -1,0 +1,37 @@
+.io-view-tabs {
+  display: flex;
+  flex: none;
+  gap: 2px;
+  padding: 4px 6px 0;
+  overflow-x: auto;
+  background: var(--panel-background);
+  border-bottom: solid 1px var(--panel-border);
+}
+
+.io-view-tab {
+  flex: none;
+  max-width: 220px;
+  padding: 5px 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: inherit;
+  font-size: 13px;
+  color: var(--panel-text);
+  background: transparent;
+  border: solid 1px transparent;
+  border-bottom: none;
+  border-radius: 3px 3px 0 0;
+  cursor: pointer;
+}
+
+.io-view-tab:hover {
+  background: var(--panel-hover);
+}
+
+.io-view-tab--active,
+.io-view-tab--active:hover {
+  background: var(--canvas-background);
+  border-color: var(--panel-border);
+  font-weight: 600;
+}

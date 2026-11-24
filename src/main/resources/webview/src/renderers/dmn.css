@@ -1,0 +1,27 @@
+/* dmn-js is themed through the `--bio-*` tokens it defines on `.bio-theme-parent` (dmn-js-shared.css). */
+.theme-dark .bio-theme-parent {
+  --bio-surface: hsl(225, 6%, 13%);
+  --bio-surface-subtle: hsl(225, 6%, 17%);
+  --bio-surface-medium: hsl(225, 6%, 22%);
+  --bio-text: hsl(225, 10%, 88%);
+  --bio-text-subtle: hsl(225, 10%, 72%);
+  --bio-text-subtlest: hsl(225, 10%, 55%);
+  --bio-border: hsl(225, 6%, 34%);
+  --bio-primary: hsl(205, 100%, 60%);
+  --bio-primary-hover: hsl(205, 100%, 68%);
+  --bio-neutral: hsl(225, 10%, 72%);
+  --bio-canvas-accent: hsl(205, 80%, 45%);
+  --bio-shadow-subtle: hsla(0, 0%, 0%, 40%);
+
+  color: var(--bio-text);
+}
+
+/* The bpmn.io badge is drawn in black. */
+.theme-dark .dmn-js-parent .bjs-powered-by {
+  filter: invert(1);
+}
+
+.dmn-js-parent {
+  height: 100%;
+  color: var(--bio-text);
+}

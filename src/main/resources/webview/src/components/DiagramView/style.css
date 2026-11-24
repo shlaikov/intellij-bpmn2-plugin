@@ -1,0 +1,27 @@
+.io-diagram-view {
+  --canvas-background: #fff;
+  --panel-background: #fafafa;
+  --panel-hover: #ececec;
+  --panel-border: #e0e0e0;
+  --panel-text: #555;
+
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--canvas-background);
+}
+
+.io-diagram-view.theme-dark {
+  --canvas-background: #000;
+  --panel-background: #1e1f22;
+  --panel-hover: #2b2d30;
+  --panel-border: #393b40;
+  --panel-text: #bcbec4;
+}
+
+/* Fills the space under the tabs; views that are taller than it (decision tables) scroll inside. */
+.io-diagram-view__canvas {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}

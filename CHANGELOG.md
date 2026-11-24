@@ -4,7 +4,24 @@
 
 ## [Unreleased]
 
+### Added
+- DMN support (#29): `.dmn` files open in the viewer, rendered with dmn-js. The decision requirements diagram, decision tables, literal and boxed expressions are shown in separate tabs; the diagram supports the same zoom, pan and pinch navigation as BPMN, and tables scroll with the wheel or trackpad. DMN 1.1 and 1.2 files are upgraded to 1.3 in memory for display. Follows the IDE theme.
+- A file icon and XML highlighting for `.dmn` files.
+
+### Fixed
+- With several diagrams open, saving a file or switching the IDE theme could reload a tab with the contents of another file: the page handler was registered globally and the last opened editor answered for all of them. Each editor now has its own address.
+- The loading indicator could stay over the diagram after the file was saved: the page reported that it had finished rendering through a function the IDE injected after the load event, which a fast reload could miss. The function is now part of the page.
+- Clicking a link inside the viewer (the bpmn.io logo) opened it in an embedded browser window and left the diagram behind a loading indicator forever. Links now open in the system browser.
+- Closing a diagram tab did not release its embedded browser or its IDE event subscriptions.
+- The viewer page re-created the bpmn-js instance on every render and never destroyed the previous one.
+- The theme was not recognised by the viewer when the IDE runs with a Turkish locale.
+- The diagram lagged behind the text: it was rebuilt only when the IDE saved the file, so an edit (or the fix for a broken file) could take many seconds to show up. It now follows the text as it is typed, including unsaved changes, and also refreshes when the file changes on disk outside the IDE.
+
 ### Changed
+- The plugin is now called **BPMN & DMN Viewer - Free and OpenSource**.
+- The viewer loads only the library needed for the opened file (bpmn-js or dmn-js).
+- The plugin archive contains only the built viewer; its sources (and, in local builds, `node_modules`) are no longer packaged. The download shrinks from about 24 MB to under 1 MB.
+- No longer depends on the `rd` library from the IDE classpath for lifecycle handling; uses the platform `Disposer`.
 - Stop using the deprecated `DynamicBundle(String)` constructor (Plugin Verifier warning on IntelliJ IDEA 2026.3); the message bundle is now created with its owning class.
 
 ## [1.2.5] - 2026-11-16

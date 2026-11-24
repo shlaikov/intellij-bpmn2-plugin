@@ -2,14 +2,12 @@ package com.github.shlaikov.intellijbpmn2plugin
 
 import com.github.shlaikov.intellijbpmn2plugin.editor.EditorProvider
 import com.intellij.ide.highlighter.XmlFileType
-import com.intellij.openapi.components.service
 import com.intellij.openapi.command.impl.DummyProject
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.psi.xml.XmlFile
 import com.intellij.testFramework.TestDataPath
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.PsiErrorElementUtil
-import com.github.shlaikov.intellijbpmn2plugin.services.ProjectService
 
 @TestDataPath("\$CONTENT_ROOT/src/test/testData")
 class PluginTest : BasePlatformTestCase() {
@@ -32,12 +30,6 @@ class PluginTest : BasePlatformTestCase() {
         myFixture.testRename("foo.xml", "foo_after.xml", "a2")
     }
 
-    fun testProjectService() {
-        val projectService = project.service<ProjectService>()
-
-        assertNotNull(projectService)
-    }
-
     override fun getTestDataPath() = "src/test/testData/rename"
 
     @Suppress("INACCESSIBLE_TYPE")
@@ -54,7 +46,11 @@ class PluginTest : BasePlatformTestCase() {
             "test.bpmn.xml" to true,
             "test.html" to false,
             "test.bpm" to false,
-            "test.bpmn.svg.xml" to false
+            "test.bpmn.svg.xml" to false,
+            "test.dmn" to true,
+            "test.DMN" to true,
+            "test.dmn.xml" to true,
+            "test.dmn.txt" to false
         )
 
         testCases.forEach { (filename, expectedResult) ->

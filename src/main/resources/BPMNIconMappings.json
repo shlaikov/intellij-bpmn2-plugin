@@ -1,7 +1,8 @@
 {
   "icons": {
     "expui": {
-      "bpmn.svg": "icons/bpmn.svg"
+      "bpmn.svg": "icons/bpmn.svg",
+      "dmn.svg": "icons/dmn.svg"
     }
   }
 }

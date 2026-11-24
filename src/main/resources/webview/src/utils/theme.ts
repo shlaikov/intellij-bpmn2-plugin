@@ -1,28 +1,20 @@
-export const darkType = 'dark'
-export const lightType = 'light'
-
+/** Must match `Theme.id` on the Kotlin side. */
 export enum ThemeType {
-    Dark = darkType,
-    Light = lightType
+  Dark = "dark",
+  Light = "light",
 }
 
-export interface ITheme {
-    defaultFillColor: string;
-    defaultStrokeColor: string;
+export function isTheme(value: unknown): value is ThemeType {
+  return value === ThemeType.Dark || value === ThemeType.Light;
 }
 
-export interface ThemeColorOptions {
-    lightType: ITheme;
-    darkType: ITheme;
+export function getBackgroundColor(theme: ThemeType): string {
+  return theme === ThemeType.Light ? "#fff" : "#000";
 }
 
-export const THEME: ThemeColorOptions = {
-    lightType: { defaultFillColor: "#fff", defaultStrokeColor: "#212121" },
-    darkType: { defaultFillColor: "#212121", defaultStrokeColor: "#fff" }
+/** Default shape colours, in the form both the bpmn-js and the dmn-js DRD renderers take as config. */
+export function diagramColors(theme: ThemeType) {
+  return theme === ThemeType.Light
+    ? { defaultFillColor: "#fff", defaultStrokeColor: "#212121", defaultLabelColor: "#212121" }
+    : { defaultFillColor: "#212121", defaultStrokeColor: "#fff", defaultLabelColor: "#fff" };
 }
-
-export function getBackgroundColor(theme: ThemeType) {
-    return theme === ThemeType.Light ? "#fff" : "#000"
-}
-
-export default THEME;

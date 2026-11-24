@@ -1,7 +1,7 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <id>com.github.shlaikov.intellijbpmn2plugin</id>
-    <name>BPMN Viewer - Free and OpenSource</name>
+    <name>BPMN &amp; DMN Viewer - Free and OpenSource</name>
     <vendor email="shlaikov.alexey@ya.ru" url="https://github.com/shlaikov">Alexey Shlaikov</vendor>
 
     <depends>com.intellij.modules.platform</depends>
@@ -16,11 +16,16 @@
         <notificationGroup id="BPMN2 Plugin Rating" displayType="STICKY_BALLOON" />
 
         <fileType name="bpmn" implementationClass="com.github.shlaikov.intellijbpmn2plugin.BPMN2FileType"
-                  fieldName="INSTANCE" language="bpmn" extensions="bpmn;bpmn.xml;bpmn2;bpmn;bpmn20.xml;bpmn20" />
+                  fieldName="INSTANCE" language="bpmn" extensions="bpmn;bpmn.xml;bpmn2;bpmn20.xml;bpmn20" />
+        <fileType name="dmn" implementationClass="com.github.shlaikov.intellijbpmn2plugin.DMNFileType"
+                  fieldName="INSTANCE" language="dmn" extensions="dmn" />
         <fileEditorProvider implementation="com.github.shlaikov.intellijbpmn2plugin.editor.EditorProvider" />
 
         <lang.syntaxHighlighterFactory language="bpmn" implementationClass="com.intellij.lang.xml.XmlSyntaxHighlighterFactory" />
         <lang.whiteSpaceFormattingStrategy language="bpmn"
+                                           implementationClass="com.intellij.lang.xml.XmlWhiteSpaceFormattingStrategy"/>
+        <lang.syntaxHighlighterFactory language="dmn" implementationClass="com.intellij.lang.xml.XmlSyntaxHighlighterFactory" />
+        <lang.whiteSpaceFormattingStrategy language="dmn"
                                            implementationClass="com.intellij.lang.xml.XmlWhiteSpaceFormattingStrategy"/>
 
         <iconProvider implementation="com.github.shlaikov.intellijbpmn2plugin.icons.IconProvider" />
@@ -28,7 +33,7 @@
     </extensions>
 
     <actions>
-        <action id="BPMN2OpenDevtools" text="Open Devtools Panel for the Current BPMN2 Preview"
+        <action id="BPMN2OpenDevtools" text="Open Devtools Panel for the Current Diagram Preview"
                 class="com.github.shlaikov.intellijbpmn2plugin.actions.OpenDevtoolsAction">
             <keyboard-shortcut
                     keymap="$default"

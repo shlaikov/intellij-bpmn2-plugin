@@ -1,13 +1,13 @@
 package com.github.shlaikov.intellijbpmn2plugin.editor
 
-import java.util.*
+import com.intellij.openapi.editor.colors.EditorColorsManager
 
+/** [id] is what the webview receives; kept explicit so it never depends on the JVM default locale. */
+enum class Theme(val id: String, val background: String) {
+    LIGHT("light", "white"),
+    DARK("dark", "black");
 
-enum class Theme {
-    LIGHT,
-    DARK;
-
-    override fun toString(): String {
-        return name.lowercase(Locale.getDefault())
+    companion object {
+        fun current(): Theme = if (EditorColorsManager.getInstance().isDarkEditor) DARK else LIGHT
     }
 }

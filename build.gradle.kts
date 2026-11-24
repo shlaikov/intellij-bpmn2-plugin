@@ -151,6 +151,17 @@ tasks {
     gradleVersion = properties("gradleVersion").get()
   }
 
+  processResources {
+    // Only the built webview belongs in the plugin jar, not its sources or node_modules.
+    exclude { it.path.startsWith("webview/") && !it.path.startsWith("webview/dist") }
+  }
+
+  runIde {
+    // Sandbox IDE only: plugin debug output in idea.log, and no "trust this project?" prompt.
+    systemProperty("idea.log.debug.categories", "#com.github.shlaikov.intellijbpmn2plugin")
+    systemProperty("idea.trust.all.projects", "true")
+  }
+
   yarn {
     nodeModulesOutputFilter {
       exclude("notExistingFile")

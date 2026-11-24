@@ -1,0 +1,10 @@
+.io-message {
+  width: fit-content;
+  margin: auto;
+  padding: 15px 60px;
+  background: var(--panel-background);
+  border-radius: 2px;
+  border: solid 1px var(--panel-border);
+  color: var(--panel-text);
+  text-align: center;
+}

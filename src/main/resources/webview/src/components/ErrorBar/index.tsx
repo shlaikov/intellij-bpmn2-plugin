@@ -1,24 +1,10 @@
 import "./style.css";
 
-export interface EventError {
-  warnings: Array<{
-    warnings: Array<{
-      error: {
-        message: string;
-        stack: string;
-      };
-      message: string;
-    }>;
-  }>;
-  message: string;
-  stack: string;
-}
-
 interface Props {
-  error: EventError | Error | null;
+  error: Error | null;
 }
 
-function InvalidState({ error }: Props) {
+function ErrorBar({ error }: Props) {
   if (!error) {
     return null;
   }
@@ -38,4 +24,4 @@ function InvalidState({ error }: Props) {
   );
 }
 
-export default InvalidState;
+export default ErrorBar;

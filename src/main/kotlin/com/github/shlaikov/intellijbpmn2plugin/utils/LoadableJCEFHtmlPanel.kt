@@ -28,10 +28,7 @@ import java.util.Locale
 import javax.swing.JComponent
 
 
-class LoadableJCEFHtmlPanel(
-    url: String? = null, html: String? = null,
-    var timeoutCallback: String? = "The diagram is taking longer than expected to load."
-) : Disposable {
+class LoadableJCEFHtmlPanel(url: String) : Disposable {
     private val isDarkEditor: Boolean = EditorColorsManager.getInstance().isDarkEditor
     private val alarm = Alarm(Alarm.ThreadToUse.SWING_THREAD, this)
 
@@ -48,6 +45,9 @@ class LoadableJCEFHtmlPanel(
     companion object {
         private const val LOADING_KEY = 1
         private const val CONTENT_KEY = 0
+
+        private const val LOAD_TIMEOUT_MS = 20000
+        private const val LOAD_TIMEOUT_MESSAGE = "The diagram is taking longer than expected to load."
 
         /**
          * CSS pixels per AWT wheel unit. On macOS JBR a trackpad reports `preciseWheelRotation` in steps of
@@ -100,17 +100,12 @@ class LoadableJCEFHtmlPanel(
     }
 
     init {
-        if (url != null) {
-            htmlPanel.loadURL(url)
-        }
+        // The browser is not disposed by anyone else; without this every closed tab leaks its CEF browser.
+        Disposer.register(this, htmlPanel)
 
-        if (html != null) {
-            htmlPanel.loadHTML(html)
-        }
+        htmlPanel.loadURL(url)
 
         ApplicationManager.getApplication().invokeLater {
-            Disposer.register(this@LoadableJCEFHtmlPanel, alarm)
-
             multiPanel.select(CONTENT_KEY, true)
         }
 
@@ -121,7 +116,7 @@ class LoadableJCEFHtmlPanel(
 
         htmlPanel.jbCefClient.addLoadHandler(object : CefLoadHandlerAdapter() {
             override fun onLoadStart(browser: CefBrowser?, frame: CefFrame?, transitionType: CefRequest.TransitionType?) {
-                alarm.addRequest({ htmlPanel.setHtml(timeoutCallback!!) }, 20000)
+                alarm.addRequest({ htmlPanel.setHtml(LOAD_TIMEOUT_MESSAGE) }, LOAD_TIMEOUT_MS)
             }
 
             override fun onLoadEnd(browser: CefBrowser?, frame: CefFrame?, httpStatusCode: Int) {
@@ -129,7 +124,8 @@ class LoadableJCEFHtmlPanel(
             }
 
             override fun onLoadingStateChange(browser: CefBrowser?, isLoading: Boolean, canGoBack: Boolean, canGoForward: Boolean) {
-                if (isLoading) {
+                // Only the diagram page itself: nothing else would ever report that it is ready.
+                if (isLoading && browser?.isPopup != true) {
                     invokeLater {
                         startLoading()
                     }
@@ -180,7 +176,6 @@ class LoadableJCEFHtmlPanel(
         loadingPanel.stopLoading()
     }
 
-    override fun dispose() {
-        alarm.dispose()
-    }
+    // The alarm, the loading panel and the browser are registered as children and go down with this panel.
+    override fun dispose() = Unit
 }
