@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-11-28
+
 ### Added
 - Visual comparison of BPMN and DMN files in the IDE's diff window — local changes, file and Git history, shelf, *Compare With…*, *Compare Files*. The two versions are shown side by side with added, removed, changed and moved elements highlighted; zoom, pan and the opened sub-process or DMN view are kept in sync, and a list of changes shows what differs (attribute values before and after) and jumps to the element. Pick **Diagram viewer** in the viewer chooser of the diff toolbar; the text viewers stay available, and the IDE remembers the choice.
 
