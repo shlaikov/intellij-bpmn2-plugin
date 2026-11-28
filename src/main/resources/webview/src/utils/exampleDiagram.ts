@@ -39,3 +39,28 @@ export const exampleDmn = `<?xml version="1.0" encoding="UTF-8"?>
     </dmndi:DMNDiagram>
   </dmndi:DMNDI>
 </definitions>`;
+
+// Earlier versions of the samples, for `?diff`: derived from them, so the two cannot drift apart.
+
+/** Without the "Yes" flow, with the scan task under its old name and the end event where it used to be. */
+export const exampleBpmnBefore = exampleBpmn
+  .replace(/<sequenceFlow [^>]*name="Yes"[^>]*\/>/, "")
+  .replace('name="Scan QR code"', 'name="Scan code"')
+  .replace(
+    /(bpmnElement="sid-E433566C-2289-4BEB-A19C-1697048900D2"[^>]*>\s*<\w+:Bounds [^>]*\by=")([\d.]+)/,
+    (_, head: string, y: string) => `${head}${Number(y) + 60}`
+  );
+
+/** Under another name, with another dish for the winter, a rule that has since gone and none for the summer. */
+export const exampleDmnBefore = exampleDmn
+  .replace('name="Dish"', 'name="Meal"')
+  .replace('"Roastbeef"', '"Stew"')
+  .replace(/<rule id="rule2">[\s\S]*?<\/rule>/, "")
+  .replace(
+    "</decisionTable>",
+    `  <rule id="rule9">
+        <inputEntry id="in9"><text>"Fall"</text></inputEntry>
+        <outputEntry id="out9"><text>"Spareribs"</text></outputEntry>
+      </rule>
+    </decisionTable>`
+  );

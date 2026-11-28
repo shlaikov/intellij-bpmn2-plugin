@@ -6,11 +6,13 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "format": "prettier --write src vite.config.ts",
     "preview": "vite preview"
   },
   "dependencies": {
     "@bpmn-io/dmn-migrate": "^0.7.1",
     "bpmn-js": "^17.8.1",
+    "bpmn-js-differ": "^4.0.0",
     "dmn-js": "^18.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
@@ -28,6 +30,9 @@
     "prettier": "^2.8.8",
     "typescript": "^5.0.2",
     "vite": "^4.5.3"
+  },
+  "prettier": {
+    "printWidth": 120
   },
   "volta": {
     "node": "20.18.0",

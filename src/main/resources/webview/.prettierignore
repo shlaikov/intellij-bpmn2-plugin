@@ -1,0 +1,3 @@
+dist
+# One long string literal per sample; reflowing it only makes diffs.
+src/utils/exampleDiagram.ts

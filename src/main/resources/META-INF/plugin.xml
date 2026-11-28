@@ -20,6 +20,8 @@
         <fileType name="dmn" implementationClass="com.github.shlaikov.intellijbpmn2plugin.DMNFileType"
                   fieldName="INSTANCE" language="dmn" extensions="dmn" />
         <fileEditorProvider implementation="com.github.shlaikov.intellijbpmn2plugin.editor.EditorProvider" />
+        <!-- Registered here rather than in bpmn2-jcef.xml: that file is not loaded on 2025.1 - 2025.3.0. -->
+        <diff.DiffTool implementation="com.github.shlaikov.intellijbpmn2plugin.diff.DiagramDiffTool" />
 
         <lang.syntaxHighlighterFactory language="bpmn" implementationClass="com.intellij.lang.xml.XmlSyntaxHighlighterFactory" />
         <lang.whiteSpaceFormattingStrategy language="bpmn"

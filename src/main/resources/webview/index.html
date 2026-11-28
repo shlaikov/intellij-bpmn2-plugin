@@ -15,8 +15,9 @@
       /**
        * @type {{
        *  kind: string,
-       *  file: string,
        *  theme: string,
+       *  file?: string,
+       *  diff?: { left: string | null, leftTitle: string | null, right: string | null, rightTitle: string | null },
        * }}
        */
       window.bpmn2Data = $$initialData$$ || {};

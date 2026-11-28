@@ -30,12 +30,15 @@ enum class DiagramKind(
     }
 
     companion object {
+        /** For content that has a name but no file behind it, such as a revision shown in a diff. */
+        fun ofName(fileName: String?): DiagramKind? = fileName?.let { name -> entries.firstOrNull { it.matches(name) } }
+
         fun of(file: VirtualFile?): DiagramKind? {
             if (file == null || file.isDirectory || !file.isValid) {
                 return null
             }
 
-            return entries.firstOrNull { it.matches(file.name) }
+            return ofName(file.name)
         }
     }
 }

@@ -39,7 +39,9 @@ class Editor(project: Project, private val file: VirtualFile, kind: DiagramKind)
         FileDocumentManager.getInstance().getDocument(file)
     }
 
-    private val view = WebView(file, kind) { document?.immutableCharSequence ?: LoadTextUtil.loadText(file) }
+    private val view = WebView(file.name) { theme ->
+        InitialData.viewer(kind, theme, document?.immutableCharSequence ?: LoadTextUtil.loadText(file))
+    }
 
     private val refresh = Alarm(Alarm.ThreadToUse.SWING_THREAD, this)
 

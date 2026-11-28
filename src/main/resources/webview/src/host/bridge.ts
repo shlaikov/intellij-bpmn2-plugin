@@ -1,4 +1,4 @@
-import type { CanvasNavigation, PinchPhase } from "../renderers/canvasNavigation";
+import type { CanvasNavigation, PinchPhase } from "../formats/canvas/navigation";
 
 /**
  * The only place that talks to the Kotlin host (`editor/WebView.kt`, `utils/LoadableJCEFHtmlPanel.kt`).
@@ -22,8 +22,11 @@ declare global {
 /** What the host substitutes for `$$initialData$$` in `index.html`; untrusted until validated by the app. */
 export interface InitialData {
   kind?: unknown;
-  file?: unknown;
   theme?: unknown;
+  /** The document to show. */
+  file?: unknown;
+  /** Present instead of `file` when the page compares two versions of a document. */
+  diff?: unknown;
 }
 
 /** `false` under `yarn dev`, where `index.html` is served as is, with its placeholders unfilled. */
@@ -66,14 +69,18 @@ function scrollUnderPointer(dx: number, dy: number, x: number, y: number): void 
 /**
  * Off-screen JCEF (2026.2+, and most 2025.x setups) cannot deliver usable wheel events or any pinch gesture
  * to the page, so the host intercepts them and calls these functions instead. `navigation` returns the canvas
- * to drive, or `null` when the active view is plain HTML (a decision table) — then the wheel scrolls whatever
- * is scrollable under the pointer, because the host has consumed the native event.
+ * to drive for a pointer at viewport position (x, y), or `null` when what is there is plain HTML (a decision
+ * table, the list of changes) — then the wheel scrolls whatever is scrollable under the pointer, because the
+ * host has consumed the native event.
  *
  * Returns a function that uninstalls the handlers.
  */
-export function installInput(navigation: () => CanvasNavigation | null): () => void {
+export function installInput(navigation: (x: number, y: number) => CanvasNavigation | null): () => void {
+  // A pinch stays with the canvas it started on, wherever the pointer drifts.
+  let pinched: CanvasNavigation | null = null;
+
   window.bpmn2Wheel = (dx, dy, x, y, ctrl, meta) => {
-    const canvas = navigation();
+    const canvas = navigation(x, y);
 
     if (!canvas) {
       scrollUnderPointer(dx, dy, x, y);
@@ -85,7 +92,11 @@ export function installInput(navigation: () => CanvasNavigation | null): () => v
   };
 
   window.bpmn2Pinch = (phase, magnification, x, y) => {
-    navigation()?.pinch(phase, magnification, { x, y });
+    if (phase === "start") {
+      pinched = navigation(x, y);
+    }
+
+    pinched?.pinch(phase, magnification, { x, y });
   };
 
   return () => {

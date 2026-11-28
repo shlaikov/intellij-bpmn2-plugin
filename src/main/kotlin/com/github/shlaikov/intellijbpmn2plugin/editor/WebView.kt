@@ -1,6 +1,5 @@
 package com.github.shlaikov.intellijbpmn2plugin.editor
 
-import com.github.shlaikov.intellijbpmn2plugin.diagram.DiagramKind
 import com.github.shlaikov.intellijbpmn2plugin.utils.LoadableJCEFHtmlPanel
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.Disposable
@@ -8,7 +7,6 @@ import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.jcef.JBCefJSQuery
 import org.cef.CefSettings
 import org.cef.browser.CefBrowser
@@ -20,14 +18,13 @@ import org.cef.handler.CefLoadHandlerAdapter
 import javax.swing.JComponent
 
 /**
- * One diagram page: a JCEF browser showing the webview for [file], rendered as [kind].
- * [text] supplies the diagram source for every (re)load; it is called on a CEF thread.
+ * One page of the webview in a JCEF browser. [name] only identifies the page in the log.
+ * [data] supplies `window.bpmn2Data` (see [InitialData]) for every (re)load; it is called on a CEF thread.
  * Everything it creates is disposed together with it.
  */
 class WebView(
-    private val file: VirtualFile,
-    private val kind: DiagramKind,
-    private val text: () -> CharSequence
+    private val name: String,
+    private val data: (Theme) -> String
 ) : Disposable {
     private val panel = LoadableJCEFHtmlPanel(DiagramResources.open(this, ::renderIndex))
 
@@ -49,7 +46,7 @@ class WebView(
         jsQuery.addHandler { request: String ->
             when (IncomingMessage.parse(request)) {
                 IncomingMessage.Event.Initialized -> {
-                    LOG.debug { "${file.name}: webview is ready" }
+                    LOG.debug { "$name: webview is ready" }
                     invokeLater { panel.stopLoading() }
                 }
                 null -> Unit
@@ -83,7 +80,7 @@ class WebView(
             ) {
                 // ERR_ABORTED is routine: the browser's initial navigation is superseded by the explicit load.
                 if (errorCode != CefLoadHandler.ErrorCode.ERR_ABORTED) {
-                    LOG.warn("${file.name}: failed to load $failedUrl: $errorCode $errorText")
+                    LOG.warn("$name: failed to load $failedUrl: $errorCode $errorText")
                 }
             }
         }
@@ -93,7 +90,7 @@ class WebView(
             override fun onConsoleMessage(
                 browser: CefBrowser?, level: CefSettings.LogSeverity?, message: String?, source: String?, line: Int
             ): Boolean {
-                LOG.debug { "${file.name}: console [$level] $message ($source:$line)" }
+                LOG.debug { "$name: console [$level] $message ($source:$line)" }
 
                 return false
             }
@@ -109,14 +106,8 @@ class WebView(
         }
     }
 
-    /** The data handed to the webview as `window.bpmn2Data`. */
-    private class InitialData(val kind: DiagramKind, val file: String, val theme: Theme) {
-        fun toJson(): String =
-            "{\"kind\":${kind.id.toJsonString()},\"file\":${file.toJsonString()},\"theme\":${theme.id.toJsonString()}}"
-    }
-
     /**
-     * Called for every (re)load of the page, so it always reflects the text and the IDE theme as they are now.
+     * Called for every (re)load of the page, so it always reflects the data and the IDE theme as they are now.
      *
      * The webview -> host function is part of the page itself rather than injected once the page has loaded:
      * an injected script races with the page's own code and, on a fast reload, can miss the new document
@@ -128,7 +119,7 @@ class WebView(
         // One pass over the template, so nothing inside the substituted file text is treated as a placeholder.
         return PLACEHOLDER.replace(template) { match ->
             when (match.groupValues[1]) {
-                "initialData" -> InitialData(kind, text().toString(), theme).toJson()
+                "initialData" -> data(theme)
                 "initialColor" -> theme.background
                 "sendToHost" -> sendToHost
                 else -> match.value
@@ -145,7 +136,7 @@ class WebView(
     }
 
     override fun dispose() {
-        LOG.debug { "${file.name}: disposed" }
+        LOG.debug { "$name: disposed" }
     }
 
     private companion object {

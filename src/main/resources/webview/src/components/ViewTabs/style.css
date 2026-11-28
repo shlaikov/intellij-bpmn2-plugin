@@ -35,3 +35,20 @@
   border-color: var(--panel-border);
   font-weight: 600;
 }
+
+.io-view-tab__mark {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: var(--diff-changed);
+}
+
+.io-view-tab__mark--added {
+  background: var(--diff-added);
+}
+
+.io-view-tab__mark--removed {
+  background: var(--diff-removed);
+}

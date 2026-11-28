@@ -1,0 +1,145 @@
+.io-changes {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  width: 280px;
+  max-width: 45%;
+  min-height: 0;
+  font-size: 13px;
+  color: var(--panel-text);
+  background: var(--panel-background);
+  border-left: solid 1px var(--panel-border);
+}
+
+.io-changes__header {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 6px 6px 10px;
+  border-bottom: solid 1px var(--panel-border);
+}
+
+.io-changes__heading {
+  margin-right: auto;
+  font-weight: 600;
+}
+
+.io-changes__count {
+  min-width: 14px;
+  padding: 1px 5px;
+  font-size: 12px;
+  text-align: center;
+  border: solid 1px;
+  border-radius: 9px;
+}
+
+.io-changes__close {
+  padding: 0 6px;
+  font: inherit;
+  font-size: 16px;
+  line-height: 20px;
+  color: inherit;
+  background: transparent;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.io-changes__close:hover {
+  background: var(--panel-hover);
+}
+
+.io-changes__list {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.io-changes__item {
+  display: flex;
+  gap: 8px;
+  padding: 6px 10px;
+  border-bottom: solid 1px var(--panel-border);
+  cursor: pointer;
+}
+
+.io-changes__item:hover {
+  background: var(--panel-hover);
+}
+
+.io-changes__item--selected,
+.io-changes__item--selected:hover {
+  background: var(--panel-hover);
+  box-shadow: inset 3px 0 0 var(--diff-focus);
+}
+
+.io-changes__kind {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  margin-top: 3px;
+  border: solid 2px;
+  border-radius: 2px;
+}
+
+.io-changes__count--added,
+.io-changes__kind--added {
+  color: var(--diff-added);
+  background: var(--diff-added-fill);
+}
+
+.io-changes__count--removed,
+.io-changes__kind--removed {
+  color: var(--diff-removed);
+  background: var(--diff-removed-fill);
+}
+
+.io-changes__count--changed,
+.io-changes__kind--changed {
+  color: var(--diff-changed);
+  background: var(--diff-changed-fill);
+}
+
+.io-changes__count--layout,
+.io-changes__kind--layout {
+  color: var(--diff-layout);
+  background: var(--diff-layout-fill);
+}
+
+.io-changes__body {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.io-changes__type {
+  font-weight: 600;
+}
+
+.io-changes__attribute {
+  margin-top: 2px;
+  font-size: 12px;
+  white-space: pre-wrap;
+}
+
+.io-changes__attribute-name {
+  opacity: 0.75;
+}
+
+.io-changes__attribute del {
+  color: var(--diff-removed);
+}
+
+.io-changes__attribute ins {
+  color: var(--diff-added);
+  text-decoration: none;
+}
+
+.io-changes__empty {
+  margin: 0;
+  padding: 16px 10px;
+  text-align: center;
+}

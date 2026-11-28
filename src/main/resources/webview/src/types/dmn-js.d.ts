@@ -20,6 +20,8 @@ declare module "dmn-js/lib/NavigatedViewer" {
     getViews(): View[];
     getActiveView(): View | undefined;
     getActiveViewer(): ViewViewer | undefined;
+    /** The dmn-moddle tree of the imported document. */
+    getDefinitions(): unknown;
     open(view: View): Promise<unknown>;
     on(event: string, callback: () => void): void;
     destroy(): void;

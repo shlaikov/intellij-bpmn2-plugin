@@ -1,0 +1,69 @@
+/*
+ * How changes look. On a canvas (BPMN, the DMN DRD) the classes are set by `formats/canvas/marks.ts`;
+ * decision tables take the same variables through the style sheet `formats/dmn/renderer.ts` generates.
+ */
+.io-diff {
+  --diff-added: #1a7f37;
+  --diff-added-fill: #d2f4d9;
+  --diff-removed: #cf222e;
+  --diff-removed-fill: #ffdcd9;
+  --diff-changed: #9a6700;
+  --diff-changed-fill: #fff1c2;
+  --diff-layout: #0969da;
+  --diff-layout-fill: #dbeafe;
+  --diff-focus: #8250df;
+}
+
+.io-diff.theme-dark {
+  --diff-added: #3fb950;
+  --diff-added-fill: #12381f;
+  --diff-removed: #f85149;
+  --diff-removed-fill: #4a1a1c;
+  --diff-changed: #d29922;
+  --diff-changed-fill: #43340c;
+  --diff-layout: #58a6ff;
+  --diff-layout-fill: #10294a;
+  --diff-focus: #a371f7;
+}
+
+/* The first child of a shape's visual is its outline; icons and text inside keep their colours. */
+.io-diff .djs-shape.diff-added .djs-visual > :first-child {
+  stroke: var(--diff-added) !important;
+  fill: var(--diff-added-fill) !important;
+}
+
+.io-diff .djs-shape.diff-removed .djs-visual > :first-child {
+  stroke: var(--diff-removed) !important;
+  fill: var(--diff-removed-fill) !important;
+}
+
+.io-diff .djs-shape.diff-changed .djs-visual > :first-child {
+  stroke: var(--diff-changed) !important;
+  fill: var(--diff-changed-fill) !important;
+}
+
+.io-diff .djs-shape.diff-layout .djs-visual > :first-child {
+  stroke: var(--diff-layout) !important;
+  fill: var(--diff-layout-fill) !important;
+}
+
+.io-diff .djs-connection.diff-added .djs-visual > path {
+  stroke: var(--diff-added) !important;
+}
+
+.io-diff .djs-connection.diff-removed .djs-visual > path {
+  stroke: var(--diff-removed) !important;
+}
+
+.io-diff .djs-connection.diff-changed .djs-visual > path {
+  stroke: var(--diff-changed) !important;
+}
+
+.io-diff .djs-connection.diff-layout .djs-visual > path {
+  stroke: var(--diff-layout) !important;
+}
+
+/* The element picked in the list of changes. */
+.io-diff .diff-focus .djs-visual {
+  filter: drop-shadow(0 0 2px var(--diff-focus)) drop-shadow(0 0 4px var(--diff-focus));
+}

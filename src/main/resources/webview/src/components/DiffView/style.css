@@ -1,0 +1,107 @@
+.io-diff__body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.io-diff__panes {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-width: 0;
+}
+
+.io-diff__pane {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.io-diff__pane + .io-diff__pane {
+  border-left: solid 1px var(--panel-border);
+}
+
+.io-diff__title {
+  flex: none;
+  padding: 4px 10px;
+  overflow: hidden;
+  font-size: 12px;
+  color: var(--panel-text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background: var(--panel-background);
+  border-bottom: solid 1px var(--panel-border);
+}
+
+.io-diff__content {
+  position: relative;
+  /* Keeps the stacking of what a library draws inside from reaching the notice and the controls on top. */
+  isolation: isolate;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Covers the canvas: there is either nothing under it or a view of something else. */
+.io-diff__notice {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 20px;
+  overflow: auto;
+  font: inherit;
+  font-size: 13px;
+  color: var(--panel-text);
+  text-align: center;
+  white-space: pre-wrap;
+  background: var(--canvas-background);
+}
+
+.io-diff__notice--error {
+  color: var(--diff-removed);
+}
+
+/* The page-wide zoom bar would sit on the list of changes. */
+.io-diff .io-zoom-controls {
+  position: absolute;
+  right: 10px;
+  bottom: 60px;
+}
+
+.io-diff__open-list {
+  position: absolute;
+  top: 34px;
+  right: 10px;
+  z-index: 2;
+  padding: 4px 10px;
+  font: inherit;
+  font-size: 12px;
+  color: var(--panel-text);
+  background: var(--panel-background);
+  border: solid 1px var(--panel-border);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.io-diff__open-list:hover {
+  background: var(--panel-hover);
+}
+
+/* A narrow preview: one above the other leaves each diagram its width. */
+@media (max-width: 520px) {
+  .io-diff__panes {
+    flex-direction: column;
+  }
+
+  .io-diff__pane + .io-diff__pane {
+    border-top: solid 1px var(--panel-border);
+    border-left: none;
+  }
+}
